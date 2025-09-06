@@ -1,13 +1,5 @@
-import 'dart:convert';
-import 'dart:typed_data';
-import 'package:brasil_fields/brasil_fields.dart';
-import 'package:brinquedoteca_flutter/component/custom_snackbar.dart';
 import 'package:brinquedoteca_flutter/model/checkin.dart';
-import 'package:brinquedoteca_flutter/model/crianca.dart';
-import 'package:brinquedoteca_flutter/model/responsavel.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
-import 'package:brinquedoteca_flutter/utils/date_helper_util.dart';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 

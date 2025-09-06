@@ -20,6 +20,7 @@ class GenericRepository<T> {
   Dio get _dio => DioClient(baseUrl: baseUrl).dio;
 
   Future<List<T>> getAll({Map<String, dynamic>? filters}) async {
+    print(_cleanFilters(filters));
     final response = await _dio.get(
       endpoint,
       queryParameters: _cleanFilters(filters),
@@ -46,13 +47,7 @@ class GenericRepository<T> {
     String? orderBy,
     bool? descending,
   }) async {
-    final queryParams = {
-      ..._cleanFilters(filters),
-      if (limit != null) 'limit': limit,
-      if (offset != null) 'offset': offset,
-      if (orderBy != null) 'order_by': orderBy,
-      if (descending != null) 'desc': descending,
-    };
+    final queryParams = _cleanFilters(filters);
 
     final response = await _dio.get(
       '$endpoint/search',
@@ -102,9 +97,14 @@ class GenericRepository<T> {
     return response;
   }
 
-  /// Remove valores nulos/vazios dos filtros
   Map<String, dynamic> _cleanFilters(Map<String, dynamic>? filters) {
     if (filters == null) return {};
-    return Map.from(filters)..removeWhere((key, value) => value == null || value == '');
+    return filters.map((key, value) {
+      if (value == null) {
+        return MapEntry(key, "null"); // força ?ch.data_saida=null
+      }
+      return MapEntry(key, value);
+    });
   }
+
 }

@@ -31,8 +31,8 @@ class CardCheckinTimer extends StatelessWidget {
     final urlImage = (checkin.urlImageResponsavelEntrada ?? checkin.crianca?.urlImage) ?? '';
     final nome = checkin.crianca?.nome ?? 'Sem nome';
     String message = "Atividades:\n";
-    for(int i = 0; i < checkin.atividades!.length; i++)
-      message += "${checkin.atividades![i].descricao}\n";
+    // for(int i = 0; i < (checkin.atividades??[]).length; i++)
+    //   message += "${checkin.atividades![i].descricao}\n";
 
     return InkWell(
       onTap: () => Navigator.push(
@@ -69,10 +69,12 @@ class CardCheckinTimer extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        nome,
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                        textAlign: TextAlign.center,
+                      Expanded(
+                        child: Text(
+                          nome,
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                       Tooltip(
                         message: message,
