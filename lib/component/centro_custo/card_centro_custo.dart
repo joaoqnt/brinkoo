@@ -29,12 +29,11 @@ class CardCentroCusto extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.pushAndRemoveUntil(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CadastroCentroCustoView(centroCusto: centroCusto),
           ),
-              (Route<dynamic> route) => false,
         );
       },
       child: content,

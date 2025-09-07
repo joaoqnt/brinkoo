@@ -1,3 +1,5 @@
+import 'package:brinquedoteca_flutter/model/usuario.dart';
+
 class Singleton {
   // Instância única (privada)
   static final Singleton _instance = Singleton._internal();
@@ -11,7 +13,9 @@ class Singleton {
   // Atributo global
   String _pageSelected = "Início";
 
-  String tenant = "00000000000000";
+  late String tenant;
+
+  Usuario? usuario;
 
   // Getter e Setter
   String get pageSelected => _pageSelected;

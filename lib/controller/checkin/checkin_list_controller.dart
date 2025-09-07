@@ -1,5 +1,6 @@
 import 'package:brinquedoteca_flutter/model/checkin.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
+import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
@@ -44,6 +45,8 @@ abstract class _CheckinListController with Store {
           'offset': page * limit,
           if (tecPesquisa.text.isNotEmpty)
             'unaccent(c.nome)': tecPesquisa.text,
+          if(Singleton.instance.usuario?.empresa != null)
+            'empresa':Singleton.instance.usuario?.empresa?.id
         },
       );
 
@@ -69,6 +72,8 @@ abstract class _CheckinListController with Store {
           "ch.data_saida": null,
           'limit': limit,
           'offset': page * limit,
+          if(Singleton.instance.usuario?.empresa != null)
+            'empresa':Singleton.instance.usuario?.empresa?.id
         },
       );
 

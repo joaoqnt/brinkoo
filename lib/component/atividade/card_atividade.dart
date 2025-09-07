@@ -29,12 +29,11 @@ class CardAtividade extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.pushAndRemoveUntil(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CadastroAtividadeView(atividade: atividade),
           ),
-              (Route<dynamic> route) => false,
         );
       },
       child: content,

@@ -1,5 +1,6 @@
 import 'package:brinquedoteca_flutter/component/custom_appbar.dart';
 import 'package:brinquedoteca_flutter/component/custom_textformfield.dart';
+import 'package:brinquedoteca_flutter/component/empresa/dropdown_empresa.dart';
 import 'package:brinquedoteca_flutter/component/foto/foto_alter_component.dart';
 import 'package:brinquedoteca_flutter/controller/parametro/usuario/cadastro_usuario_controller.dart';
 import 'package:brinquedoteca_flutter/model/usuario.dart';
@@ -60,6 +61,10 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
                       _buildInput('Login', _controller.tecLogin),
                       _buildInput('Nome', _controller.tecNome),
                       _buildInput('Senha', _controller.tecSenha),
+                      DropdownEmpresa(
+                        empresaSelected: _controller.empresaSelected,
+                        onChanged: (p0) => _controller.setEmpresa(p0),
+                      )
                     ],
                   ),
                   const SizedBox(height: 24),

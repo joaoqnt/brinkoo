@@ -46,12 +46,11 @@ class CardEmpresa extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.pushAndRemoveUntil(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CadastroEmpresaView(empresa: empresa),
           ),
-              (Route<dynamic> route) => false,
         );
       },
       child: content,

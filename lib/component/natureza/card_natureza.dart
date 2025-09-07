@@ -29,12 +29,11 @@ class CardNatureza extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.pushAndRemoveUntil(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CadastroNaturezaView(natureza: natureza),
           ),
-              (Route<dynamic> route) => false,
         );
       },
       child: content,

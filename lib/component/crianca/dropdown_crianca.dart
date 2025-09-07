@@ -41,11 +41,16 @@ class DropdownCrianca extends StatelessWidget {
           }
           return CardCrianca(crianca: selectedItem,enableOnTap: false);
         },
-        items: (String filter, LoadProps? loadProps) async{
-          try{
-            return await _repository.getAll(filters: {'nome_crianca': filter});
-            return criancas;
-          } catch(e){
+        items: (String filter, LoadProps? loadProps) async {
+          try {
+            final Map<String, dynamic> filtros = {'limit': 50};
+
+            if (filter.isNotEmpty) {
+              filtros['nome_crianca'] = filter;
+            }
+
+            return await _repository.getAll(filters: filtros);
+          } catch (e) {
             return [];
           }
         },

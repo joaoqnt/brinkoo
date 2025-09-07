@@ -73,12 +73,11 @@ class CardParceiro extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.pushAndRemoveUntil(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CadastroParceiroView(parceiro: parceiro),
           ),
-              (Route<dynamic> route) => false,
         );
       },
       child: content,

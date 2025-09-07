@@ -1,9 +1,12 @@
+import 'package:brinquedoteca_flutter/model/empresa.dart';
+
 class Usuario {
   int? id;
   String? login;
   String? nome;
   String? senha;
   String? urlFoto;
+  Empresa? empresa;
 
   bool permiteAcessarCadastro;
   bool permiteAcessarFinanceiro;
@@ -49,6 +52,7 @@ class Usuario {
     this.nome,
     this.senha,
     this.urlFoto,
+    this.empresa,
     this.permiteAcessarCadastro = false,
     this.permiteAcessarFinanceiro = false,
     this.permiteAcessarProduto = false,
@@ -91,6 +95,7 @@ class Usuario {
     nome: json['nome'],
     senha: json['senha'],
     urlFoto: json['url_foto'],
+    empresa: json['empresa'] != null ? Empresa.fromJson(json['empresa']) : null,
     permiteAcessarCadastro: json['permite_acessar_cadastro'] ?? false,
     permiteAcessarFinanceiro: json['permite_acessar_financeiro'] ?? false,
     permiteAcessarProduto: json['permite_acessar_produto'] ?? false,
@@ -127,7 +132,7 @@ class Usuario {
     permiteDeletarUsuario: json['permite_deletar_usuario'] ?? false,
   );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson({bool isLogin = false}) => {
     'id': id,
     'login': login,
     'nome': nome,
@@ -167,5 +172,6 @@ class Usuario {
     'permite_deletar_parceiro': permiteDeletarParceiro,
     'permite_deletar_empresa': permiteDeletarEmpresa,
     'permite_deletar_usuario': permiteDeletarUsuario,
+    'empresa': isLogin ? empresa?.toJson() : empresa?.id,
   };
 }

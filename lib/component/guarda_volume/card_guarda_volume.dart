@@ -29,12 +29,11 @@ class CardGuardaVolume extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.pushAndRemoveUntil(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CadastroGuardasVolumeView(guardaVolume: guardaVolume),
           ),
-              (Route<dynamic> route) => false,
         );
       },
       child: content,

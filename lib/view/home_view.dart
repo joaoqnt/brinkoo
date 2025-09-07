@@ -1,4 +1,5 @@
 import 'package:brinquedoteca_flutter/controller/inicio_controller.dart';
+import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:flutter/material.dart';
 
 import '../component/checkin/card_checkin_timer.dart';
@@ -36,9 +37,19 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               spacing: 10,
               children: [
-                RowSearchTextfield(
-                  tecController: _controller.tecPesquisa,
-                  widget: CadastroCheckinView(),
+                Row(
+                  children: [
+                    if(Singleton.instance.usuario?.empresa != null)...[
+                      Text("${Singleton.instance.usuario?.empresa?.descricao}"),
+                      SizedBox(width: 20),
+                    ],
+                    Expanded(
+                      child: RowSearchTextfield(
+                        tecController: _controller.tecPesquisa,
+                        widget: CadastroCheckinView(),
+                      ),
+                    ),
+                  ],
                 ),
                 Expanded(
                   child: GridView.builder(

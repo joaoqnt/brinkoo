@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:brinquedoteca_flutter/component/custom_snackbar.dart';
+import 'package:brinquedoteca_flutter/model/empresa.dart';
 import 'package:brinquedoteca_flutter/model/usuario.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
 import 'package:brinquedoteca_flutter/utils/singleton.dart';
@@ -26,6 +27,7 @@ abstract class _CadastroUsuarioController with Store {
 
   @observable
   Uint8List? usuarioImage;
+  Empresa? empresaSelected;
 
   @observable
   bool isLoading = false;
@@ -117,7 +119,7 @@ abstract class _CadastroUsuarioController with Store {
       login: tecLogin.text,
       senha: tecSenha.text,
       urlFoto: "https://brinkoo.com.br/images/${Singleton.instance.tenant}/usuario/${tecLogin.text}.png",
-
+      empresa: empresaSelected,
       permiteAcessarCadastro: permiteAcessarCadastro,
       permiteAcessarFinanceiro: permiteAcessarFinanceiro,
       permiteAcessarProduto: permiteAcessarProduto,
@@ -201,6 +203,7 @@ abstract class _CadastroUsuarioController with Store {
     permiteDeletarParceiro = usuario?.permiteDeletarParceiro ?? false;
     permiteDeletarEmpresa = usuario?.permiteDeletarEmpresa ?? false;
     permiteDeletarUsuario = usuario?.permiteDeletarUsuario ?? false;
+    setEmpresa(usuario?.empresa);
   }
 
   @action
@@ -214,5 +217,9 @@ abstract class _CadastroUsuarioController with Store {
       filename: "${usuario.login}.png",
       fileBytes: usuarioImage!,
     );
+  }
+
+  setEmpresa(Empresa? empresa){
+    empresaSelected = empresa;
   }
 }

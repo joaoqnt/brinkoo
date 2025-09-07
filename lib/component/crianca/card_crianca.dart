@@ -27,6 +27,7 @@ class CardCrianca extends StatelessWidget {
                 backgroundImage: crianca.urlImage != null && crianca.urlImage!.isNotEmpty
                     ? NetworkImage(crianca.urlImage!)
                     : null,
+                onBackgroundImageError: (exception, stackTrace) => Icons.child_care,
                 child: crianca.urlImage == null || crianca.urlImage!.isEmpty
                     ? const Icon(Icons.child_care, size: 30)
                     : null,

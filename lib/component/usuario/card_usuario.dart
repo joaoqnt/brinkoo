@@ -73,12 +73,11 @@ class CardUsuario extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.pushAndRemoveUntil(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CadastroUsuarioView(usuario: usuario),
           ),
-              (Route<dynamic> route) => false,
         );
       },
       child: content,
