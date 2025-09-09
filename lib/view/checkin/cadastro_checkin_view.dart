@@ -10,6 +10,7 @@ import 'package:brinquedoteca_flutter/component/guarda_volume/dropdown_guarda_vo
 import 'package:brinquedoteca_flutter/component/responsavel/dropdown_multiselection_responsavel.dart';
 import 'package:brinquedoteca_flutter/component/responsavel/dropdown_responsavel.dart';
 import 'package:brinquedoteca_flutter/component/row_search_textfield.dart';
+import 'package:brinquedoteca_flutter/component/section_title.dart';
 import 'package:brinquedoteca_flutter/controller/checkin/cadastro_checkin_controller.dart';
 import 'package:brinquedoteca_flutter/controller/checkin/checkin_list_controller.dart';
 import 'package:brinquedoteca_flutter/model/checkin.dart';
@@ -32,8 +33,6 @@ class CadastroCheckinView extends StatelessWidget {
   Widget build(BuildContext context) {
     _controller.setCheckin(checkin: checkin);
     _controller.setParametro();
-    if(checkin?.dataEntrada != null)
-      _controller.startTimer(dataEntrada: checkin!.dataEntrada!);
     return Scaffold(
       appBar: CustomAppBar(
         title: "Cadastro de Check-in",
@@ -46,19 +45,10 @@ class CadastroCheckinView extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 10,
                   children: [
-
-                    // Título "Selecione uma criança"
-                    const Text(
-                      "Selecione uma criança",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueGrey,
-                      ),
-                    ),
+                    SectionTitle(text: "Selecione uma criança"),
                     Row(
                       children: [
                         Expanded(
@@ -69,7 +59,7 @@ class CadastroCheckinView extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: 10),
-                        FilledButton.tonal(
+                        FilledButton(
                             onPressed: () {
                               Navigator.push(
                                   context,
@@ -87,19 +77,7 @@ class CadastroCheckinView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 10,
                         children: [
-                          //DropdownAtividade(
-                          //  onChanged: (p0) => _controller.setAtividades(p0!),
-                          //  atividadesSelected: _controller.atividades,
-                          //),
-                          const Text(
-                            "Selecione um responsável pelo check-in",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+                          SectionTitle(text: "Selecione um responsável pelo check-in"),
                           Row(
                             children: [
                               Expanded(
@@ -110,9 +88,13 @@ class CadastroCheckinView extends StatelessWidget {
                                   enabled: checkin == null,
                                 ),
                               ),
-                              FilledButton.tonal(
+                              SizedBox(width: 10),
+                              FilledButton(
                                   onPressed: () {
-
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => CadastroCriancaView(fromCheckin: true))
+                                    );
                                   },
                                   child: Icon(Icons.add)
                               ),
@@ -121,15 +103,7 @@ class CadastroCheckinView extends StatelessWidget {
                           if (checkin == null) ...[
 
                           ],
-                          const Text(
-                            "Selecione quem pode ser responsável pelo check-out",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+                          SectionTitle(text: "Selecione quem pode ser responsável pelo check-out"),
                           DropdownMultiselectionResponsavel(
                             responsaveis: _controller.criancaSelected!.responsaveis??[],
                             checkin: false,
@@ -138,15 +112,7 @@ class CadastroCheckinView extends StatelessWidget {
                             onChanged: (p0) => _controller.setResponsaveisPossiveisCheckout(p0!),
                             responsaveisSelected: _controller.responsaveisPossiveisCheckout,
                           ),
-                          const Text(
-                            "Selecione um Guarda Volume",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+                          SectionTitle(text: "Selecione um Guarda Volume"),
                           DropdownGuardaVolume(
                             guardaVolume: _controller.guardaVolumeSelected,
                             required: false,

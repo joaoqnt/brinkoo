@@ -210,7 +210,7 @@ class FormCadastroResponsavelComponent extends StatelessWidget {
           ],
         ),
       ),
-      FilledButton.tonal(
+      FilledButton(
           onPressed: () async{
             if(controller.tecCep.text.isNotEmpty && UtilBrasilFields.removeCaracteres(controller.tecCep.text).length == 8) {
               controller.setEnderecoByCep();

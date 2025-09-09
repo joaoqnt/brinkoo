@@ -24,11 +24,15 @@ class CardCrianca extends StatelessWidget {
                   : null,
               child: CircleAvatar(
                 radius: 30,
-                backgroundImage: crianca.urlImage != null && crianca.urlImage!.isNotEmpty
+                backgroundImage: (crianca.urlImage != null && crianca.urlImage!.isNotEmpty)
                     ? NetworkImage(crianca.urlImage!)
                     : null,
-                onBackgroundImageError: (exception, stackTrace) => Icons.child_care,
-                child: crianca.urlImage == null || crianca.urlImage!.isEmpty
+                onBackgroundImageError: (crianca.urlImage != null && crianca.urlImage!.isNotEmpty)
+                    ? (exception, stackTrace) {
+                  debugPrint("Erro ao carregar imagem: $exception");
+                }
+                    : null, // 🔹 Só define se tiver imagem
+                child: (crianca.urlImage == null || crianca.urlImage!.isEmpty)
                     ? const Icon(Icons.child_care, size: 30)
                     : null,
               ),

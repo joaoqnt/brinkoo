@@ -53,11 +53,18 @@ class CardParceiro extends StatelessWidget {
                       const Icon(Icons.assignment_ind, size: 16, color: Colors.grey),
                       const SizedBox(width: 4),
                       Text(
-                        parceiro.pessoaFisica == true
-                            ? UtilBrasilFields.obterCpf(parceiro.cpfCnpj!)
-                            : UtilBrasilFields.obterCnpj(parceiro.cpfCnpj!),
+                            () {
+                          try {
+                            return parceiro.pessoaFisica == true
+                                ? UtilBrasilFields.obterCpf(parceiro.cpfCnpj ?? "")
+                                : UtilBrasilFields.obterCnpj(parceiro.cpfCnpj ?? "");
+                          } catch (e) {
+                            return parceiro.cpfCnpj ?? ""; // fallback sem máscara
+                          }
+                        }(),
                         style: const TextStyle(fontSize: 13),
-                      ),
+                      )
+
                     ],
                   ),
                 ],

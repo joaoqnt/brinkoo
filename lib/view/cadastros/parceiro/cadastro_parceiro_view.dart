@@ -143,7 +143,7 @@ class _CadastroParceiroViewState extends State<CadastroParceiroView> {
                           ),
                         ),
                         SizedBox(width: 10),
-                        FilledButton.tonal(
+                        FilledButton(
                             onPressed: () async{
                               if(_controller.tecCep.text.isNotEmpty
                                   && UtilBrasilFields.removeCaracteres(_controller.tecCep.text).length == 8) {

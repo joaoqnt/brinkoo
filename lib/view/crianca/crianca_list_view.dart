@@ -59,7 +59,7 @@ class _CriancaListViewState extends State<CriancaListView> {
             Expanded(
               child: Observer(
                 builder: (_) {
-                  if (_controller.isLoading && _controller.criancas.isEmpty) {
+                  if (_controller.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
 

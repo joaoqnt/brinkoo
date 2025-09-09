@@ -6,7 +6,7 @@ class GuardaVolume {
   GuardaVolume({this.descricao, this.id, this.utilizado});
 
   GuardaVolume.fromJson(Map<String, dynamic> json) {
-    descricao = json['descricao'];
+    descricao = json['descricao'].toString();
     id = json['id'];
     utilizado = json['utilizado'];
   }

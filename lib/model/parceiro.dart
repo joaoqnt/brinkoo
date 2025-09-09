@@ -41,14 +41,14 @@ class Parceiro {
   Parceiro.fromJson(Map<String, dynamic> json) {
     agenciaBancaria = json['agencia_bancaria'];
     bairro = json['bairro'];
-    cep = json['cep'];
+    cep = json['cep'].toString();
     cidade = json['cidade'];
     cliente = json['cliente'];
     cpfCnpj = json['cpf_cnpj'].toString();
     nome = json['nome'];
     email = json['email'];
-    endereco = json['endereco'];
-    estado = json['estado'];
+    endereco = json['endereco'].toString();
+    estado = json['estado'].toString();
     fornecedor = json['fornecedor'];
     funcionario = json['funcionario'];
     id = json['id'];

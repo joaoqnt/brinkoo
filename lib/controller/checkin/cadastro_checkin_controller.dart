@@ -11,10 +11,7 @@ import 'package:brinquedoteca_flutter/model/guarda_volume.dart';
 import 'package:brinquedoteca_flutter/model/parametro.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
-import 'package:brinquedoteca_flutter/utils/date_helper_util.dart';
 import 'package:brinquedoteca_flutter/utils/singleton.dart';
-import 'package:brinquedoteca_flutter/utils/take_photo.dart';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
@@ -80,7 +77,7 @@ abstract class _CadastroCheckinController with Store {
   }
 
   @action
-  void startTimer({required DateTime dataEntrada}) {
+  void _startTimer({required DateTime dataEntrada}) {
     _timer?.cancel(); // cancela qualquer timer anterior
 
     _timer = Timer.periodic(Duration(seconds: 1), (_) {
@@ -115,6 +112,9 @@ abstract class _CadastroCheckinController with Store {
       atividades = [];
       responsaveisPossiveisCheckout = [];
     }
+
+    if(checkin?.dataEntrada != null)
+      _startTimer(dataEntrada: checkin!.dataEntrada!);
   }
 
   @action
@@ -260,20 +260,24 @@ abstract class _CadastroCheckinController with Store {
         CustomSnackBar.warning(context, "Adicione ao menos um responsável pelo check-out");
         return false;
       }
-      //if(criancaImage == null){
-      //  CustomSnackBar.warning(context, "Adicione uma foto da criança no check-in");
-      //  return false;
-      //}
+      if(criancaImage == null && criancaSelected?.urlImage == null){
+       CustomSnackBar.warning(context, "Adicione uma foto da criança");
+       return false;
+      }
+      if(responsavelEntradaImage == null && responsavelEntradaSelected?.urlImage == null){
+        CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-in");
+        return false;
+      }
     } else {
       if(checkin.dataSaida == null){
         if(responsavelSaidaSelected == null) {
           CustomSnackBar.warning(context, "Selecione um responsável pelo check-out");
           return false;
         }
-        //if(responsavelSaidaImage == null) {
-        //  CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-out");
-        //  return false;
-        //}
+        if(responsavelSaidaImage == null && responsavelSaidaSelected?.urlImage == null) {
+         CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-out");
+         return false;
+        }
       }
     }
     return true;

@@ -56,7 +56,7 @@ class _LoginViewState extends State<LoginView> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Container(
-                                    height: Responsive.isMobile(context) ? 70 : 100,
+                                    height: Responsive.isMobile(context) ? 70 : 120,
                                     padding: EdgeInsets.all(8),
                                     child: Image.asset("assets/logo.jpeg", fit: BoxFit.cover),
                                   ),
@@ -118,10 +118,12 @@ class _LoginViewState extends State<LoginView> {
                                         if(_controller.formKey.currentState!.validate()){
                                           try{
                                             Usuario? usuario = await _controller.doLogin();
-                                            if(usuario != null)
+                                            if(usuario != null) {
+
                                               Navigator.of(context).pushNamed('/home');
-                                            else
+                                            } else {
                                               CustomSnackBar.error(context, "Usuário não encontrado");
+                                            }
                                           } catch(e){
                                             CustomSnackBar.error(context, "Dados incorretos!");
                                           }

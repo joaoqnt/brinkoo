@@ -41,6 +41,7 @@ class DropdownEmpresa extends StatelessWidget {
         selectedItem: empresaSelected,
         decoratorProps: DropDownDecoratorProps(
           decoration: InputDecoration(
+            prefixIcon: Icon(Icons.home),
             hintText: "Selecione a empresa vinculada",
             labelText: "Empresa",
             filled: true,

@@ -10,7 +10,7 @@ final ThemeData brinquedotecaTheme = ThemeData(
     primaryContainer: const Color(0xFFE3F2FD),
     onPrimaryContainer: const Color(0xFF1E3A4C),
 
-    secondary: const Color(0xFFFFD180), // Laranja bebê
+    secondary: const Color(0xFFF3A92B), // Laranja bebê
     onSecondary: const Color(0xFF4E342E),
     secondaryContainer: const Color(0xFFFFF3E0),
     onSecondaryContainer: const Color(0xFF5D4037),

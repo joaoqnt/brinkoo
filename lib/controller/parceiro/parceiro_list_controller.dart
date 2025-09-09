@@ -8,7 +8,7 @@ part 'parceiro_list_controller.g.dart';
 class ParceiroListController = _ParceiroListController with _$ParceiroListController;
 
 abstract class _ParceiroListController with Store {
-  final _naturezaRepository = GenericRepository(
+  final _parceiroRepository = GenericRepository(
       endpoint: "parceiros",
       fromJson:(p0) => Parceiro.fromJson(p0),
   );
@@ -17,13 +17,52 @@ abstract class _ParceiroListController with Store {
   bool isLoading = false;
   @observable
   List<Parceiro> parceiros = ObservableList.of([]);
+  @observable
+  bool hasMore = true;
+  int _offset = 0;
+  final int _limit = 50;
 
-  Future<List<Parceiro>> getParceiros() async{
-    try{
-      parceiros = await _naturezaRepository.getAll();
-    } catch(e){
+  @action
+  Future<List<Parceiro>> getParceiros({bool reset = false}) async {
+    isLoading = true;
+
+    if (reset) {
+      _offset = 0;
+      hasMore = true;
+      parceiros.clear();
+    }
+
+    try {
+      if (!hasMore) {
+        isLoading = false;
+        return parceiros;
+      }
+
+      Map<String, dynamic> filters = {
+        'limit': _limit,
+        'offset': _offset,
+      };
+      if (tecPesquisa.text.isNotEmpty) {
+        filters['descricao'] = tecPesquisa.text;
+      }
+
+      final novosParceiros = await _parceiroRepository.getAll(filters: filters);
+
+      if (novosParceiros.isEmpty || novosParceiros.length < _limit) {
+        hasMore = false; // não tem mais páginas
+      }
+
+      // Se for reset, já limpou antes; se não, adiciona
+      parceiros.addAll(novosParceiros);
+
+      _offset += _limit;
+
+    } catch (e) {
       print(e);
     }
+
+    isLoading = false;
     return parceiros;
   }
+
 }

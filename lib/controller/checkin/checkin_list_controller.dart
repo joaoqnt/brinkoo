@@ -46,7 +46,7 @@ abstract class _CheckinListController with Store {
           if (tecPesquisa.text.isNotEmpty)
             'unaccent(c.nome)': tecPesquisa.text,
           if(Singleton.instance.usuario?.empresa != null)
-            'empresa':Singleton.instance.usuario?.empresa?.id
+            'ch.empresa':Singleton.instance.usuario?.empresa?.id
         },
       );
 
@@ -73,7 +73,7 @@ abstract class _CheckinListController with Store {
           'limit': limit,
           'offset': page * limit,
           if(Singleton.instance.usuario?.empresa != null)
-            'empresa':Singleton.instance.usuario?.empresa?.id
+            'ch.empresa':Singleton.instance.usuario?.empresa?.id
         },
       );
 

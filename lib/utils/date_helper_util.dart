@@ -8,7 +8,7 @@ class DateHelperUtil {
 
   /// Formata para 'dd-MM-yyyy HH:mm:ss'
   static String formatDateTime(DateTime date) {
-    return DateFormat('dd-MM-yyyy HH:mm:ss').format(date);
+    return DateFormat('dd/MM/yyyy HH:mm:ss').format(date);
   }
 
   /// Converte de String 'yyyy-MM-dd' para 'dd/MM/yyyy'

@@ -1,4 +1,5 @@
 import 'package:brinquedoteca_flutter/view/cadastros//centro_custo/centro_custo_list_view.dart';
+import 'package:brinquedoteca_flutter/view/cadastros/convenio/convenio_list_view.dart';
 import 'package:brinquedoteca_flutter/view/cadastros/empresa/empresa_list_view.dart';
 import 'package:brinquedoteca_flutter/view/cadastros/forma_pagamento/forma_pagamento_list_view.dart';
 import 'package:brinquedoteca_flutter/view/cadastros/guardas_volume/guarda_volume_list_view.dart';
@@ -27,6 +28,7 @@ class _CadastroViewState extends State<CadastroView> with TickerProviderStateMix
   final List<Tab> _tabs = const [
     Tab(text: 'Atividades'),
     Tab(text: 'Centros de Custo'),
+    Tab(text: 'Convênios'),
     Tab(text: 'Empresas'),
     Tab(text: 'Formas de Pagamento'),
     Tab(text: 'Guardas Volume'),
@@ -78,6 +80,7 @@ class _CadastroViewState extends State<CadastroView> with TickerProviderStateMix
                 children: [
                   AtividadesListView(),
                   CentroCustoListView(),
+                  ConvenioListView(),
                   EmpresaListView(),
                   FormaPagamentoListView(),
                   GuardaVolumeListView(),

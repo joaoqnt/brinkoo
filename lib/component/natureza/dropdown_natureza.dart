@@ -1,33 +1,32 @@
-import 'package:brinquedoteca_flutter/model/guarda_volume.dart';
+import 'package:brinquedoteca_flutter/model/natureza.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
-import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/responsive.dart';
 
-class DropdownGuardaVolume extends StatelessWidget {
+class DropdownNatureza extends StatelessWidget {
   bool required;
   bool enabled;
-  GuardaVolume? guardaVolume;
-  void Function(GuardaVolume?)? onChanged;
+  Natureza? natureza;
+  void Function(Natureza?)? onChanged;
 
-  DropdownGuardaVolume({
+  DropdownNatureza({
     super.key,
     this.required = true,
     this.enabled = true,
-    this.guardaVolume,
+    this.natureza,
     this.onChanged,
   });
 
-  final _repository = GenericRepository(endpoint: "/guardas-volume", fromJson: (p0) => GuardaVolume.fromJson(p0));
-  List<GuardaVolume> guardasVolume = [];
+  final _repository = GenericRepository(endpoint: "/naturezas", fromJson: (p0) => Natureza.fromJson(p0));
+  List<Natureza> naturezas = [];
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.maxFinite,
-      child: DropdownSearch<GuardaVolume>(
+      child: DropdownSearch<Natureza>(
         popupProps: PopupProps.menu(
           showSearchBox: true,
         ),
@@ -37,19 +36,17 @@ class DropdownGuardaVolume extends StatelessWidget {
                 filters: {
                   if(filter.isNotEmpty)
                     'descricao': filter,
-                  if(Singleton.instance.usuario?.empresa != null)
-                    'empresa': Singleton.instance.usuario?.empresa?.id,
-                  'utilizado':false
+                  'ativo':true
                 }
             );
-            return guardasVolume;
+            return naturezas;
           } catch(e){
             return [];
           }
         },
-        compareFn: (GuardaVolume a, GuardaVolume b) => a.id == b.id,
-        itemAsString: (GuardaVolume banco) => '${banco.descricao}',
-        selectedItem: guardaVolume,
+        compareFn: (Natureza a, Natureza b) => a.id == b.id,
+        itemAsString: (Natureza banco) => '${banco.descricao}',
+        selectedItem: natureza,
         onChanged: onChanged,
         enabled: enabled,
         validator: required
@@ -57,9 +54,9 @@ class DropdownGuardaVolume extends StatelessWidget {
             : null,
         decoratorProps: DropDownDecoratorProps(
           decoration: InputDecoration(
-            prefixIcon: Icon(Icons.door_sliding),
-            hintText: "Guarda Volume",
-            labelText: "Guarda Volume",
+            prefixIcon: Icon(Icons.category),
+            hintText: "Naturezas",
+            labelText: "Naturezas",
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(),

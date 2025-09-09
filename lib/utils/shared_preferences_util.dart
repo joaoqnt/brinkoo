@@ -14,6 +14,8 @@ class SharedPreferencesUtil{
 
     // Converte usuário para JSON e salva
     await prefs.setString("usuario", jsonEncode(usuario.toJson(isLogin: true)));
+
+    Singleton.instance.usuario = usuario;
   }
 
   Future<Usuario?> loadUserFromPreferences() async {
