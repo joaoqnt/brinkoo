@@ -95,10 +95,36 @@ abstract class _CadastroConvenioController with Store {
   }
 
   @action
-  void setConvenio({Convenio? convenio}){
-    if(convenio != null){
-      tecDescricao.text = convenio.descricao??'';
-      tecCodigo.text = convenio.id.toString();
+  void setConvenio({Convenio? convenio}) {
+    if (convenio != null) {
+      tecCodigo.text = convenio.id?.toString() ?? '';
+      tecDescricao.text = convenio.descricao ?? '';
+      tecDataExpiracao.text = convenio.dataExpiracao != null
+          ? DateHelperUtil.formatDate(convenio.dataExpiracao!)
+          : '';
+      tecDiaVencimento.text = convenio.diaVencimento?.toString() ?? '';
+      tecMaxVisita.text = convenio.maxVisita?.toString() ?? '';
+      tecMinDiaVencimento.text = convenio.minDiaVencimento?.toString() ?? '';
+      tecObservacao.text = convenio.observacao ?? '';
+      tecPercConvenio.text = convenio.percConvenio != null
+          ? UtilBrasilFields.obterReal(convenio.percConvenio!)
+          : '';
+      tecPercEmpresa.text = convenio.percEmpresa != null
+          ? UtilBrasilFields.obterReal(convenio.percEmpresa!)
+          : '';
+      tecValorConvenio.text = convenio.valorConvenio != null
+          ? UtilBrasilFields.obterReal(convenio.valorConvenio!)
+          : '';
+      tecValorEmpresa.text = convenio.valorEmpresa != null
+          ? UtilBrasilFields.obterReal(convenio.valorEmpresa!)
+          : '';
+      tecQtdVisita.text = convenio.qtdVisita?.toString() ?? '';
+
+      parceiroSelected = convenio.parceiro;
+      empresaSelected = convenio.empresa;
+      naturezaSelected = convenio.natureza;
+      centroCustoSelected = convenio.centroCusto;
+      isAtivo = convenio.ativo ?? true;
     }
   }
 

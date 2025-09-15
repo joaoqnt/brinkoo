@@ -32,18 +32,19 @@ class _CadastroEmpresaViewState extends State<CadastroEmpresaView> {
         useDrawer: false,
         showBackButton: true,
         title: "Cadastro de Empresas",
-        pageBackButton: CadastroView(initialIndex: 2,),
+        pageBackButton: CadastroView(initialIndex: 2),
       ),
       drawer: CustomDrawer(),
-      body: Observer(
-        builder: (context) {
-          return Form(
-            key: _controller.formKeyCenCus,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
+      body: Observer(builder: (context) {
+        return Form(
+          key: _controller.formKeyEmpresa,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
               child: Column(
                 spacing: 20,
                 children: [
+                  /// Código + Nome + CNPJ
                   Row(
                     children: [
                       SizedBox(
@@ -66,43 +67,177 @@ class _CadastroEmpresaViewState extends State<CadastroEmpresaView> {
                       SizedBox(
                         width: 200,
                         child: CustomTextFormField(
-                          labelText: "Cnpj",
+                          labelText: "CNPJ",
                           controller: _controller.tecCnpj,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                             CnpjInputFormatter()
                           ],
                           validator: (p0) {
-                            if(UtilBrasilFields.isCNPJValido(_controller.tecCnpj.text)){
+                            if (UtilBrasilFields.isCNPJValido(
+                                _controller.tecCnpj.text)) {
                               return null;
-                            } else{
-                              return "Cnpj inválido";
+                            } else {
+                              return "CNPJ inválido";
                             }
                           },
                         ),
                       ),
                     ],
                   ),
+
+                  /// CEP + Bairro + Cidade + UF
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        child: CustomTextFormField(
+                          labelText: "CEP",
+                          controller: _controller.tecCep,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            CepInputFormatter(),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Expanded(
+                        flex: 2,
+                        child: CustomTextFormField(
+                          labelText: "Bairro",
+                          controller: _controller.tecBairro,
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Expanded(
+                        flex: 2,
+                        child: CustomTextFormField(
+                          labelText: "Cidade",
+                          controller: _controller.tecCidade,
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      SizedBox(
+                        width: 60,
+                        child: CustomTextFormField(
+                          labelText: "UF",
+                          controller: _controller.tecUf,
+                          maxLength: 2,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  /// Logradouro + Número + Complemento
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: CustomTextFormField(
+                          labelText: "Logradouro",
+                          controller: _controller.tecLogradouro,
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      SizedBox(
+                        width: 100,
+                        child: CustomTextFormField(
+                          labelText: "Número",
+                          controller: _controller.tecNumero,
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Expanded(
+                        flex: 2,
+                        child: CustomTextFormField(
+                          labelText: "Complemento",
+                          controller: _controller.tecComplemento,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  /// Telefone + Celular + Email
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 200,
+                        child: CustomTextFormField(
+                          labelText: "Telefone",
+                          controller: _controller.tecTelefone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            TelefoneInputFormatter(),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      SizedBox(
+                        width: 200,
+                        child: CustomTextFormField(
+                          labelText: "Celular",
+                          controller: _controller.tecCelular,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            TelefoneInputFormatter(),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Expanded(
+                        child: CustomTextFormField(
+                          labelText: "E-mail",
+                          controller: _controller.tecEmail,
+                          keyboardType: TextInputType.emailAddress,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  /// Inscrição Estadual + CNAE
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextFormField(
+                          labelText: "Inscrição Estadual",
+                          controller: _controller.tecInscEst,
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Expanded(
+                        child: CustomTextFormField(
+                          labelText: "CNAE",
+                          controller: _controller.tecCnae,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  /// Botão de salvar
                   FilledButton(
                     onPressed: () async {
-                      if(_controller.formKeyCenCus.currentState!.validate() && !_controller.isLoading){
-                        if(widget.empresa == null) {
+                      if (_controller.formKeyEmpresa.currentState!.validate() &&
+                          !_controller.isLoading) {
+                        if (widget.empresa == null) {
                           await _controller.createEmpresa(context);
                         } else {
-                          await _controller.updateEmpresa(context,widget.empresa!);
+                          await _controller.updateEmpresa(
+                              context, widget.empresa!);
                         }
                       }
                     },
                     child: _controller.isLoading
-                        ? CircularProgressIndicator(color: Colors.white,)
+                        ? CircularProgressIndicator(
+                      color: Colors.white,
+                    )
                         : Text("Salvar alterações"),
-                  )
+                  ),
                 ],
               ),
             ),
-          );
-        }
-      ),
+          ),
+        );
+      }),
     );
   }
 }

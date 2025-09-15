@@ -87,7 +87,7 @@ class _CadastroConvenioViewState extends State<CadastroConvenioView> {
                     const SizedBox(width: 20),
                     Expanded(
                         child: DropdownNatureza(
-                          required: true,
+                          required: false,
                           natureza: _controller.naturezaSelected,
                           onChanged: (p0) => _controller.setNatureza(natureza: p0),
                         )

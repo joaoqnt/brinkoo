@@ -1,4 +1,5 @@
 import 'package:brinquedoteca_flutter/model/convenio.dart';
+import 'package:brinquedoteca_flutter/view/cadastros/convenio/cadastro_convenio_view.dart';
 import 'package:flutter/material.dart';
 
 class CardConvenio extends StatelessWidget {
@@ -58,7 +59,10 @@ class CardConvenio extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        // Navegação comentada
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CadastroConvenioView(convenio: convenio)),
+        );
       },
       child: content,
     );

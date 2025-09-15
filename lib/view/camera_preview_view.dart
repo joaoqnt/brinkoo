@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:html' as html;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'dart:ui_web' as ui_web;
 import 'package:flutter/material.dart';
 
 class CameraPreviewWeb extends StatefulWidget {
@@ -42,7 +43,7 @@ class _CameraPreviewWebState extends State<CameraPreviewWeb> {
 
     // Registrar view com id único para evitar cache/congelamento
     // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
+    ui_web.platformViewRegistry.registerViewFactory(
       _viewType,
           (int viewId) => _videoElement,
     );
