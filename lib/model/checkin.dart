@@ -1,5 +1,7 @@
 import 'package:brinquedoteca_flutter/model/atividade.dart';
+import 'package:brinquedoteca_flutter/model/convenio.dart';
 import 'package:brinquedoteca_flutter/model/crianca.dart';
+import 'package:brinquedoteca_flutter/model/empresa.dart';
 import 'package:brinquedoteca_flutter/model/forma_pagamento.dart';
 import 'package:brinquedoteca_flutter/model/guarda_volume.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
@@ -14,6 +16,8 @@ class Checkin {
   Responsavel? responsavelSaida;
   GuardaVolume? guardaVolume;
   FormaPagamento? formaPagamento;
+  Empresa? empresa;
+  Convenio? convenio;
   double? valorTotal;
   String? urlImageCrianca;
   String? urlImageResponsavelEntrada;
@@ -45,6 +49,8 @@ class Checkin {
     this.useUrlImageResponsavelSaida,
     this.responsaveisPossiveisCheckout,
     this.minutosDesejados,
+    this.empresa,
+    this.convenio,
   });
 
   Checkin.fromJson(Map<String, dynamic> json) {
@@ -137,11 +143,27 @@ class Checkin {
     }
 
     try {
+      empresa = json['empresa'] != null
+          ? Empresa.fromJson(json['empresa'])
+          : null;
+    } catch (e) {
+      empresa = null;
+    }
+
+    try {
       formaPagamento = json['forma_pagamento'] != null
           ? FormaPagamento.fromJson(json['forma_pagamento'])
           : null;
     } catch (e) {
       formaPagamento = null;
+    }
+
+    try {
+      convenio = json['convenio'] != null
+          ? Convenio.fromJson(json['convenio'])
+          : null;
+    } catch (e) {
+      convenio = null;
     }
   }
 
@@ -157,12 +179,17 @@ class Checkin {
     if (this.formaPagamento != null) {
       data['forma_pagamento'] = this.formaPagamento!.id;
     }
-    data['cupom_desconto'] = this.cupomDesconto;
+    if (this.convenio != null) {
+      data['convenio'] = this.convenio!.id;
+    }
     data['data_entrada'] = this.dataEntrada?.toIso8601String();
     data['data_saida'] = this.dataSaida?.toIso8601String();
     data['id'] = this.id;
     if (this.responsavelEntrada != null) {
       data['responsavel_entrada'] = this.responsavelEntrada!.id;
+    }
+    if (this.empresa != null) {
+      data['empresa'] = this.empresa!.id;
     }
     if (this.atividades != null) {
       data['atividades'] = this.atividades!.map((v) => v.toJson()).toList();

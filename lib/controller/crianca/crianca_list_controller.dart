@@ -6,6 +6,7 @@ import 'package:brinquedoteca_flutter/model/crianca.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
 import 'package:brinquedoteca_flutter/utils/date_helper_util.dart';
+import 'package:brinquedoteca_flutter/utils/utils.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
@@ -53,7 +54,7 @@ abstract class _CriancaListController with Store {
         'offset': _offset,
       };
       if(tecPesquisa.text.isNotEmpty)
-        filters['nome_crianca'] = tecPesquisa.text;
+        filters['unaccent(LOWER(c.nome))'] = Utils.removerAcentosEMinusculo(tecPesquisa.text);
 
       final novaLista = await _criancaRepository.getAll(
         filters: filters

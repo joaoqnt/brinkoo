@@ -46,7 +46,7 @@ class DropdownCrianca extends StatelessWidget {
             final Map<String, dynamic> filtros = {'limit': 50};
 
             if (filter.isNotEmpty) {
-              filtros['nome_crianca'] = filter;
+              filtros['unaccent(LOWER(c.nome)'] = filter;
             }
 
             return await _repository.getAll(filters: filtros);

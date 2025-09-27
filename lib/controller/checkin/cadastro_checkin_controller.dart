@@ -193,6 +193,7 @@ abstract class _CadastroCheckinController with Store {
       dataSaida: dataSaida,
       responsaveisPossiveisCheckout: responsaveisPossiveisCheckout,
       minutosDesejados: int.tryParse(tecMinutosDesejados.text)??60,
+      empresa: Singleton.instance.usuario?.empresa
     );
   }
 
@@ -247,39 +248,39 @@ abstract class _CadastroCheckinController with Store {
   }
 
   bool validate(BuildContext context,{Checkin? checkin}){
-    if(criancaSelected == null){
-      CustomSnackBar.warning(context, "Selecione uma criança");
-      return false;
-    }
-    if(responsavelEntradaSelected == null){
-      CustomSnackBar.warning(context, "Selecione um responsável pelo check-in");
-      return false;
-    }
-    if(checkin == null){
-      if(responsaveisPossiveisCheckout.isEmpty) {
-        CustomSnackBar.warning(context, "Adicione ao menos um responsável pelo check-out");
-        return false;
-      }
-      if(criancaImage == null && criancaSelected?.urlImage == null){
-       CustomSnackBar.warning(context, "Adicione uma foto da criança");
-       return false;
-      }
-      if(responsavelEntradaImage == null && responsavelEntradaSelected?.urlImage == null){
-        CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-in");
-        return false;
-      }
-    } else {
-      if(checkin.dataSaida == null){
-        if(responsavelSaidaSelected == null) {
-          CustomSnackBar.warning(context, "Selecione um responsável pelo check-out");
-          return false;
-        }
-        if(responsavelSaidaImage == null && responsavelSaidaSelected?.urlImage == null) {
-         CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-out");
-         return false;
-        }
-      }
-    }
+    // if(criancaSelected == null){
+    //   CustomSnackBar.warning(context, "Selecione uma criança");
+    //   return false;
+    // }
+    // if(responsavelEntradaSelected == null){
+    //   CustomSnackBar.warning(context, "Selecione um responsável pelo check-in");
+    //   return false;
+    // }
+    // if(checkin == null){
+    //   if(responsaveisPossiveisCheckout.isEmpty) {
+    //     CustomSnackBar.warning(context, "Adicione ao menos um responsável pelo check-out");
+    //     return false;
+    //   }
+    //   if(criancaImage == null && criancaSelected?.urlImage == null){
+    //    CustomSnackBar.warning(context, "Adicione uma foto da criança");
+    //    return false;
+    //   }
+    //   if(responsavelEntradaImage == null && responsavelEntradaSelected?.urlImage == null){
+    //     CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-in");
+    //     return false;
+    //   }
+    // } else {
+    //   if(checkin.dataSaida == null){
+    //     if(responsavelSaidaSelected == null) {
+    //       CustomSnackBar.warning(context, "Selecione um responsável pelo check-out");
+    //       return false;
+    //     }
+    //     if(responsavelSaidaImage == null && responsavelSaidaSelected?.urlImage == null) {
+    //      CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-out");
+    //      return false;
+    //     }
+    //   }
+    // }
     return true;
   }
 }

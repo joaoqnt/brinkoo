@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:brinquedoteca_flutter/component/custom_textformfield.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +19,7 @@ class RowSearchTextfield extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Timer? _debounce;
     return Row(
       spacing: 10,
       children: [
@@ -28,7 +31,13 @@ class RowSearchTextfield extends StatelessWidget {
               suffixIcon: Icon(Icons.search),
               filled: true,
               fillColor: Colors.grey.shade200,
-              onChanged: onChanged,
+              onChanged: (value) {
+                if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+                _debounce = Timer(const Duration(milliseconds: 500), () {
+                  onChanged?.call(value); // chama a função original após 500ms
+                });
+              },
               border: OutlineInputBorder(
                 borderSide: BorderSide.none,
                 borderRadius: BorderRadius.circular(12),

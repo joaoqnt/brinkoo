@@ -71,5 +71,4 @@ abstract class _LoginControllerBase with Store {
     }
   }
 
-
 }
