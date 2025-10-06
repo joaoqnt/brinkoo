@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:brinquedoteca_flutter/component/custom_action_icon.dart';
 import 'package:brinquedoteca_flutter/events/image_preview_dialog.dart';
-import 'package:brinquedoteca_flutter/view/camera_preview_view.dart';
 import 'package:flutter/material.dart';
 class FotoAlterComponent extends StatelessWidget {
   final Uint8List? capturedImageBytes;
@@ -64,14 +63,14 @@ class FotoAlterComponent extends StatelessWidget {
             mini: true,
             backgroundColor: Colors.blue,
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (_) => CameraPreviewWeb(
-                  onCapture: (imageBytes) {
-                    if (onAdd != null) onAdd!(imageBytes);
-                  },
-                ),
-              );
+              // showDialog(
+              //   context: context,
+              //   builder: (_) => CameraPreviewWeb(
+              //     onCapture: (imageBytes) {
+              //       if (onAdd != null) onAdd!(imageBytes);
+              //     },
+              //   ),
+              // );
             },
             tooltip: 'Adicionar foto',
             child: const Icon(Icons.add_a_photo, size: 20),
@@ -91,14 +90,14 @@ class FotoAlterComponent extends StatelessWidget {
                     icon: Icons.edit,
                     tooltip: 'Alterar foto',
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => CameraPreviewWeb(
-                          onCapture: (imageBytes) {
-                            if (onEdit != null) onEdit!(imageBytes);
-                          },
-                        ),
-                      );
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (_) => CameraPreviewWeb(
+                      //     onCapture: (imageBytes) {
+                      //       if (onEdit != null) onEdit!(imageBytes);
+                      //     },
+                      //   ),
+                      // );
                     },
 
                   ),

@@ -7,7 +7,6 @@ import 'package:brinquedoteca_flutter/utils/shared_preferences_util.dart';
 import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 part 'login_controller.g.dart';
 
@@ -15,7 +14,7 @@ class LoginController = _LoginControllerBase with _$LoginController;
 
 abstract class _LoginControllerBase with Store {
   final _repository = GenericRepository(
-    endpoint: "login",
+    endpoint: "login_app",
     fromJson: (p0) => Usuario.fromJson(p0),
   );
 
@@ -54,10 +53,10 @@ abstract class _LoginControllerBase with Store {
   Future<Usuario?> doLogin() async {
     try {
       isLoading = true;
-      Singleton.instance.tenant = UtilBrasilFields.removeCaracteres(tecEmpresa.text);
+      Singleton.instance.tenant = 'responsaveis';
 
       final usuario = await _repository.create({
-        "login": tecLogin.text,
+        "email": tecLogin.text,
         "senha": tecSenha.text,
       });
 

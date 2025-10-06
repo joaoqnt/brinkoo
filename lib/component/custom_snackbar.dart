@@ -6,8 +6,8 @@ class CustomSnackBar {
     AnimatedSnackBar.material(
       message,
       type: AnimatedSnackBarType.success,
-      mobilePositionSettings: MobilePositionSettings(
-      ),
+      mobileSnackBarPosition: MobileSnackBarPosition.top,
+      desktopSnackBarPosition: DesktopSnackBarPosition.topCenter,
       duration: const Duration(seconds: 3),
     ).show(context);
   }
@@ -16,8 +16,8 @@ class CustomSnackBar {
     AnimatedSnackBar.material(
       message,
       type: AnimatedSnackBarType.error,
-      mobilePositionSettings: const MobilePositionSettings(
-      ),
+      mobileSnackBarPosition: MobileSnackBarPosition.top,
+      desktopSnackBarPosition: DesktopSnackBarPosition.topCenter,
       duration: const Duration(seconds: 3),
     ).show(context);
   }
@@ -26,8 +26,8 @@ class CustomSnackBar {
     AnimatedSnackBar.material(
       message,
       type: AnimatedSnackBarType.warning,
-      mobilePositionSettings: const MobilePositionSettings(
-      ),
+      mobileSnackBarPosition: MobileSnackBarPosition.top,
+      desktopSnackBarPosition: DesktopSnackBarPosition.topCenter,
       duration: const Duration(seconds: 3),
     ).show(context);
   }
@@ -36,8 +36,8 @@ class CustomSnackBar {
     AnimatedSnackBar.material(
       message,
       type: AnimatedSnackBarType.info,
-      mobilePositionSettings: const MobilePositionSettings(
-      ),
+      mobileSnackBarPosition: MobileSnackBarPosition.top,
+      desktopSnackBarPosition: DesktopSnackBarPosition.topCenter,
       duration: const Duration(seconds: 3),
     ).show(context);
   }

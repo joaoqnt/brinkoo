@@ -7,7 +7,7 @@ class DioClient {
   DioClient({String? baseUrl}) {
     dio = Dio(
       BaseOptions(
-        baseUrl: baseUrl??'http://localhost:5000/',
+        baseUrl: baseUrl??'http://192.168.234.159:5000/',
         //baseUrl: baseUrl??'https://api.brinkoo.com.br/',
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
