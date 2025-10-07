@@ -36,7 +36,7 @@ class ButtonGoogle extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: Colors.grey.shade400),
         ),
         child: Image.asset("assets/google_logo.png", fit: BoxFit.cover),
       ),

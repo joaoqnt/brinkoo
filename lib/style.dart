@@ -2,44 +2,113 @@ import 'package:flutter/material.dart';
 
 final ThemeData brinquedotecaTheme = ThemeData(
   useMaterial3: true,
-  colorScheme: ColorScheme(
+  colorScheme: const ColorScheme(
     brightness: Brightness.light,
 
-    primary: const Color(0xFF90CAF9), // Azul pastel
-    onPrimary: const Color(0xFF29434E),
-    primaryContainer: const Color(0xFFE3F2FD),
-    onPrimaryContainer: const Color(0xFF1E3A4C),
+    // Roxo vibrante como cor primária (alegre, chamativa e amigável)
+    primary: Color(0xFF9C27B0), // Roxo médio vibrante
+    onPrimary: Colors.white,
+    primaryContainer: Color(0xFFF3E5F5), // Roxo bem clarinho (fundo de containers)
+    onPrimaryContainer: Color(0xFF4A148C), // Roxo escuro
 
-    secondary: const Color(0xFFF3A92B), // Laranja bebê
-    onSecondary: const Color(0xFF4E342E),
-    secondaryContainer: const Color(0xFFFFF3E0),
-    onSecondaryContainer: const Color(0xFF5D4037),
+    // Secundária puxada pro magenta/pink (divertida e moderna)
+    secondary: Color(0xFFE91E63), // Rosa pink vibrante
+    onSecondary: Colors.white,
+    secondaryContainer: Color(0xFFF8BBD0),
+    onSecondaryContainer: Color(0xFF880E4F),
 
-    tertiary: const Color(0xFFA5D6A7), // Verde menta claro
-    onTertiary: const Color(0xFF1B5E20),
-    tertiaryContainer: const Color(0xFFE8F5E9),
-    onTertiaryContainer: const Color(0xFF2E7D32),
+    // Terciária puxada pro lilás/menta (refrescante e amigável)
+    tertiary: Color(0xFFBA68C8), // Lilás forte
+    onTertiary: Colors.white,
+    tertiaryContainer: Color(0xFFE1BEE7),
+    onTertiaryContainer: Color(0xFF4A0072),
 
-    error: Colors.red.shade700,
+    error: Colors.red,
     onError: Colors.white,
 
-    background: const Color(0xFFFAFAFA),
-    onBackground: const Color(0xFF37474F),
+    background: Color(0xFFFDF4FF), // Fundo lilás muito claro
+    onBackground: Color(0xFF3E2C4A), // Roxo acinzentado escuro
 
     surface: Colors.white,
-    onSurface: const Color(0xFF37474F),
+    onSurface: Color(0xFF3E2C4A),
   ),
+
   textTheme: const TextTheme(
-    titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-    bodyMedium: TextStyle(fontSize: 16),
+    titleLarge: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 24,
+      color: Color(0xFF4A148C),
+    ),
+    titleMedium: TextStyle(
+      fontWeight: FontWeight.w600,
+      fontSize: 18,
+      color: Color(0xFF4A148C),
+    ),
+    bodyMedium: TextStyle(
+      fontSize: 16,
+      color: Color(0xFF3E2C4A),
+    ),
+    labelLarge: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      color: Color(0xFFE91E63),
+    ),
   ),
+
   appBarTheme: const AppBarTheme(
-    backgroundColor: Color(0xFF90CAF9), // Azul pastel
-    foregroundColor: Color(0xFF29434E), // Texto mais suave
+    backgroundColor: Color(0xFF9C27B0),
+    foregroundColor: Colors.white,
     elevation: 0,
+    centerTitle: true,
+    titleTextStyle: TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    ),
   ),
+
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: Color(0xFFFFD180),
-    foregroundColor: Color(0xFF4E342E),
+    backgroundColor: Color(0xFFE91E63),
+    foregroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(20)),
+    ),
+  ),
+
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF9C27B0),
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    ),
+  ),
+
+  cardTheme: CardTheme(
+    color: Colors.white,
+    elevation: 3,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+    shadowColor: Colors.purple.withOpacity(0.2),
+    margin: const EdgeInsets.all(10),
+  ),
+
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: const Color(0xFFF3E5F5),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: Color(0xFF9C27B0), width: 2),
+    ),
+    labelStyle: const TextStyle(color: Color(0xFF4A148C)),
+    hintStyle: const TextStyle(color: Colors.black45),
   ),
 );

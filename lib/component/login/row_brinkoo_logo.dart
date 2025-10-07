@@ -4,24 +4,30 @@ import '../../utils/responsive.dart';
 
 class RowBrinkooLogo extends StatelessWidget {
   double? height;
-  RowBrinkooLogo({super.key});
+  double? fontSize;
+  RowBrinkooLogo({
+    super.key,
+    this.height = 100,
+    this.fontSize = 60,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      spacing: 10,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          height: 100,
-          child: Image.asset("assets/logo.jpeg", fit: BoxFit.cover),
+          height: height,
+          child: Image.asset("assets/logo.png", fit: BoxFit.cover),
         ),
-        SizedBox(width: 10),
         Flexible(
           child: Text(
             'Brinkoo',
             style: TextStyle(
-              fontSize: 40,
+              fontSize: fontSize,
               fontWeight: FontWeight.bold,
+              color: Colors.grey.shade800
             ),
           ),
         )
