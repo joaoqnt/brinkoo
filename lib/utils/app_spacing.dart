@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 /// - [md] = médio (16)
 /// - [lg] = grande (24)
 /// - [xl] = muito grande (32)
+/// - [xgl] = (40)
 class AppSpacing {
   AppSpacing._(); // impede instanciação
 
@@ -16,6 +17,7 @@ class AppSpacing {
   static const vMd = SizedBox(height: 16);
   static const vLg = SizedBox(height: 24);
   static const vXl = SizedBox(height: 32);
+  static const vXgl = SizedBox(height: 40);
 
   /// 🌿 Espaçamentos horizontais
   static const hXs = SizedBox(width: 4);

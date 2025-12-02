@@ -9,9 +9,6 @@ class SharedPreferencesUtil{
   Future<void> saveToPreferences(Usuario usuario) async {
     final prefs = await SharedPreferences.getInstance();
 
-    // Salva tenant
-    await prefs.setString("tenant", Singleton.instance.tenant);
-
     // Converte usuário para JSON e salva
     await prefs.setString("usuario", jsonEncode(usuario.toJson(isLogin: true)));
 
@@ -20,9 +17,6 @@ class SharedPreferencesUtil{
 
   Future<Usuario?> loadUserFromPreferences() async {
     final prefs = await SharedPreferences.getInstance();
-
-    // Recupera tenant
-    Singleton.instance.tenant = prefs.getString("tenant")??'';
 
     // Recupera usuário
     final usuarioJson = prefs.getString("usuario");

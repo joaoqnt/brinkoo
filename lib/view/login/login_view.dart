@@ -6,7 +6,6 @@ import 'package:brinquedoteca_flutter/component/login/row_divider_conecte.dart';
 import 'package:brinquedoteca_flutter/component/login/text_field_login.dart';
 import 'package:brinquedoteca_flutter/controller/login/login_controller.dart';
 import 'package:brinquedoteca_flutter/model/usuario.dart';
-import 'package:brinquedoteca_flutter/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -39,7 +38,7 @@ class _LoginViewState extends State<LoginView> {
           builder: (context) {
             return Center(
               child: SingleChildScrollView(
-                padding: AppSpacing.paddingH32V24,
+                padding: AppSpacing.paddingH24V16,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: 400),
                   child: Form(
@@ -47,11 +46,8 @@ class _LoginViewState extends State<LoginView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        /// LOGO
                         Center(child: RowBrinkooLogo()),
-                        const SizedBox(height: 40),
-
-                        /// CAMPOS
+                        AppSpacing.vXgl,
                         TextFieldLogin(
                           controller: _controller.tecLogin,
                           hintText: "seu.email@dominio.com",
@@ -59,7 +55,7 @@ class _LoginViewState extends State<LoginView> {
                           prefixIcon:
                           Icon(Icons.email, color: Colors.grey.shade600),
                         ),
-                        const SizedBox(height: 16),
+                        AppSpacing.vMd,
                         TextFieldLogin(
                           controller: _controller.tecSenha,
                           hintText: "sua senha",
@@ -76,8 +72,6 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           ),
                         ),
-
-                        /// ESQUECI SENHA
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
@@ -92,7 +86,7 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        AppSpacing.vSm,
 
                         /// BOTÃO ENTRAR
                         FilledButton(
@@ -125,15 +119,15 @@ class _LoginViewState extends State<LoginView> {
                           )
                               : const Text("Entrar"),
                         ),
-                        const SizedBox(height: 25),
+                        AppSpacing.vLg,
 
                         /// DIVISOR
                         RowDividerConecte(),
-                        const SizedBox(height: 25),
+                        AppSpacing.vLg,
 
                         /// GOOGLE
                         Center(child: ButtonGoogle()),
-                        const SizedBox(height: 30),
+                        AppSpacing.vXl,
 
                         /// CRIAR CONTA
                         RowCreateAccount(),

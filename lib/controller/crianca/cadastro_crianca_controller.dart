@@ -192,8 +192,8 @@ abstract class _CadastroCriancaController with Store {
       responsavel.endereco = controller.tecEndereco.text;
       responsavel.estado = controller.tecEstado.text;
       responsavel.parentesco = relacionamentoSelected[responsavel];
-      responsavel.urlImage = "https://brinkoo.com.br/images/${Singleton.instance.tenant}/responsavel/"
-          "${UtilBrasilFields.removeCaracteres(controller.tecDocumento.text)}.png";
+      // responsavel.urlImage = "https://brinkoo.com.br/images/${Singleton.instance.tenant}/responsavel/"
+      //     "${UtilBrasilFields.removeCaracteres(controller.tecDocumento.text)}.png";
       responsaveisTmp.add(responsavel);
     }
     responsaveis = responsaveisTmp;

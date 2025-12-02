@@ -7,6 +7,7 @@ class TextFieldLogin extends StatelessWidget {
   TextEditingController controller;
   String hintText;
   String labelText;
+  String? errorText;
   bool obscureText;
   Widget prefixIcon;
   Widget? suffixIcon;
@@ -27,6 +28,7 @@ class TextFieldLogin extends StatelessWidget {
     this.inputFormatters,
     this.keyboardType,
     this.onChanged,
+    this.errorText,
   });
 
   @override
@@ -47,6 +49,7 @@ class TextFieldLogin extends StatelessWidget {
       inputFormatters: inputFormatters,
       keyboardType: keyboardType,
       onChanged: onChanged,
+      errorText: errorText,
     );
   }
 }

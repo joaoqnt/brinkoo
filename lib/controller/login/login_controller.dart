@@ -22,7 +22,6 @@ abstract class _LoginControllerBase with Store {
 
   TextEditingController tecLogin = TextEditingController();
   TextEditingController tecSenha = TextEditingController();
-  TextEditingController tecEmpresa = TextEditingController();
 
   @observable
   bool isVisible = false;
@@ -40,12 +39,6 @@ abstract class _LoginControllerBase with Store {
       Usuario usuario = Singleton.instance.usuario!;
       tecLogin.text = usuario.login??'';
       tecSenha.text = usuario.senha??'';
-      try{
-        tecEmpresa.text = UtilBrasilFields.obterCnpj(Singleton.instance.tenant);
-
-      } catch(e){
-        tecEmpresa.text = Singleton.instance.tenant;
-      }
     }
   }
 
@@ -53,7 +46,6 @@ abstract class _LoginControllerBase with Store {
   Future<Usuario?> doLogin() async {
     try {
       isLoading = true;
-      Singleton.instance.tenant = 'responsaveis';
 
       final usuario = await _repository.create({
         "email": tecLogin.text,

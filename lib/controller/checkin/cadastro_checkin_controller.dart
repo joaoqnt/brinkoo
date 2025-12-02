@@ -173,11 +173,11 @@ abstract class _CadastroCheckinController with Store {
       guardaVolume: guardaVolumeSelected,
       formaPagamento: formaPagamentoSelected,
       valorTotal: checkin?.valorTotal??(valorFinal == 0 ? null : valorFinal),
-      urlImageResponsavelSaida: (checkin?.urlImageResponsavelSaida) ??
-          ((checkin == null || responsavelSaidaImage == null)
-              ? null
-              :  "https://brinkoo.com.br/images/${Singleton.instance.tenant}/checkout_responsavel/"
-              "${responsavelSaidaSelected?.id}_${checkin.id}.png"),
+      // urlImageResponsavelSaida: (checkin?.urlImageResponsavelSaida) ??
+      //     ((checkin == null || responsavelSaidaImage == null)
+      //         ? null
+      //         :  "https://brinkoo.com.br/images/${Singleton.instance.tenant}/checkout_responsavel/"
+      //         "${responsavelSaidaSelected?.id}_${checkin.id}.png"),
       useUrlImageCrianca: checkin?.useUrlImageCrianca ??
           ((checkin == null || criancaImage == null)
               ? false

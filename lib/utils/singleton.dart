@@ -13,14 +13,19 @@ class Singleton {
   // Atributo global
   String _pageSelected = "Início";
 
-  late String tenant;
+  late String _tenant;
 
   Usuario? usuario;
 
   // Getter e Setter
   String get pageSelected => _pageSelected;
+  String get tenant => _tenant;
 
   set pageSelected(String value) {
     _pageSelected = value;
+  }
+
+  set tenant(String value) {
+    _tenant = value;
   }
 }

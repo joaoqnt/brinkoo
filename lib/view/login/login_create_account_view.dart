@@ -5,7 +5,8 @@ import 'package:brinquedoteca_flutter/component/login/row_divider_conecte.dart';
 import 'package:brinquedoteca_flutter/component/login/text_field_login.dart';
 import 'package:brinquedoteca_flutter/controller/login/login_create_account_controller.dart';
 import 'package:brinquedoteca_flutter/utils/app_spacing.dart';
-import 'package:brinquedoteca_flutter/utils/responsive.dart';
+import 'package:brinquedoteca_flutter/utils/singleton.dart';
+import 'package:brinquedoteca_flutter/utils/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -18,8 +19,7 @@ class LoginCreateAccountView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMobile = MediaQuery.of(context).size.width < 500;
-
+    Singleton.instance.tenant = "responsaveis";
     return Scaffold(
       appBar: const CustomAppBar(title: "Criar conta"),
       body: GestureDetector(
@@ -29,10 +29,11 @@ class LoginCreateAccountView extends StatelessWidget {
           builder: (context) {
             return Center(
               child: SingleChildScrollView(
-                padding: AppSpacing.paddingH32V24,
+                padding: AppSpacing.paddingH24V16,
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 400),
                   child: Form(
+                    key: _controller.formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -43,44 +44,49 @@ class LoginCreateAccountView extends StatelessWidget {
                             height: 30,
                           ),
                         ),
-                        const SizedBox(height: 30),
+                        AppSpacing.vLg,
 
                         /// GOOGLE LOGIN
                         RowDividerConecte(title: "Conecte com"),
-                        const SizedBox(height: 20),
+                        AppSpacing.vMd,
                         Center(child: ButtonGoogle()),
-                        const SizedBox(height: 25),
+                        AppSpacing.vMd,
 
                         /// SEPARADOR
                         RowDividerConecte(title: "ou"),
-                        const SizedBox(height: 25),
+                        AppSpacing.vMd,
 
                         /// TÍTULO
                         Text(
                           "Crie sua conta gratuitamente",
                           style: TextStyle(
-                            fontSize: 22,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.grey.shade800,
                           ),
                           textAlign: TextAlign.start,
                         ),
-                        const SizedBox(height: 25),
+                        AppSpacing.vMd,
 
                         /// CAMPOS DE TEXTO
                         TextFieldLogin(
                           controller: _controller.tecCpf,
                           hintText: "000.000.000-01",
                           labelText: "CPF",
-                          prefixIcon: Icon(Icons.assignment,
-                              color: Colors.grey.shade600),
+                          prefixIcon: Icon(Icons.assignment, color: Colors.grey.shade600),
+                          errorText: _controller.errorTextCpf,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                             CpfInputFormatter(),
                           ],
+                          validator: (p0) {
+                            if(!Validator().isValidCpf(UtilBrasilFields.removeCaracteres(p0!)))
+                              return "Cpf inválido";
+                            return null;
+                          },
                           keyboardType: TextInputType.number,
                         ),
-                        const SizedBox(height: 15),
+                        AppSpacing.vMd,
 
                         TextFieldLogin(
                           controller: _controller.tecNome,
@@ -90,17 +96,38 @@ class LoginCreateAccountView extends StatelessWidget {
                           Icon(Icons.person, color: Colors.grey.shade600),
                           keyboardType: TextInputType.text,
                         ),
-                        const SizedBox(height: 15),
-
+                        AppSpacing.vMd,
                         TextFieldLogin(
                           controller: _controller.tecEmail,
                           hintText: "seu.email@dominio.com",
                           labelText: "Email",
-                          prefixIcon:
-                          Icon(Icons.email, color: Colors.grey.shade600),
+                          prefixIcon: Icon(Icons.email, color: Colors.grey.shade600),
+                          validator: (p0) {
+                            if(!Validator().isValidEmail(p0!))
+                              return "E-mail inválido";
+                            return null;
+                          },
                           keyboardType: TextInputType.emailAddress,
                         ),
-                        const SizedBox(height: 15),
+                        AppSpacing.vMd,
+
+                        TextFieldLogin(
+                          controller: _controller.tecCelular,
+                          hintText: "(34) 99998-8899",
+                          labelText: "Celular",
+                          prefixIcon: Icon(Icons.phone_android, color: Colors.grey.shade600),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            TelefoneInputFormatter()
+                          ],
+                          validator: (p0) {
+                            if(!Validator().isValidCelular(p0!))
+                              return "Celular inválido";
+                            return null;
+                          },
+                          keyboardType: TextInputType.phone,
+                        ),
+                        AppSpacing.vMd,
 
                         TextFieldLogin(
                           controller: _controller.tecSenha,
@@ -119,55 +146,53 @@ class LoginCreateAccountView extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        AppSpacing.vSm,
 
                         /// REGRAS DE SENHA
                         Text(
                           "Para sua segurança, crie uma senha com no mínimo:",
                           style: const TextStyle(fontSize: 12),
                         ),
-                        const SizedBox(height: 8),
+                        AppSpacing.vXs,
                         Column(
                           children: _controller.passwordValid.entries.map((entry) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    entry.value ? Icons.check : Icons.close,
-                                    size: 14,
-                                    color:
-                                    entry.value ? Colors.green : Colors.red,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: Text(
-                                      entry.key,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: entry.value
-                                            ? Colors.green
-                                            : Colors.red,
-                                      ),
+                            return Row(
+                              children: [
+                                AppSpacing.hMd,
+                                Icon(
+                                  entry.value ? Icons.check : Icons.close,
+                                  size: 14,
+                                  color:
+                                  entry.value ? Colors.green : Colors.red,
+                                ),
+                                const SizedBox(width: 5),
+                                Expanded(
+                                  child: Text(
+                                    entry.key,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: entry.value
+                                          ? Colors.green
+                                          : Colors.red,
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             );
                           }).toList(),
                         ),
-                        const SizedBox(height: 30),
-
+                        AppSpacing.vMd,
                         /// BOTÃO CRIAR CONTA
                         FilledButton(
                           style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed: () {
-                            // TODO: Implementar lógica de criação de conta
+                          onPressed: () async{
+                            if(_controller.formKey.currentState!.validate()) {
+                              await _controller.validateCpf();
+                            }
                           },
                           child: const Text("Criar conta"),
                         ),

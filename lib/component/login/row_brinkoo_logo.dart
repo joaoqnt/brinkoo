@@ -7,7 +7,7 @@ class RowBrinkooLogo extends StatelessWidget {
   double? fontSize;
   RowBrinkooLogo({
     super.key,
-    this.height = 100,
+    this.height = 80,
     this.fontSize = 60,
   });
 
@@ -17,7 +17,7 @@ class RowBrinkooLogo extends StatelessWidget {
       spacing: 10,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
+        SizedBox(
           height: height,
           child: Image.asset("assets/logo.png", fit: BoxFit.cover),
         ),
