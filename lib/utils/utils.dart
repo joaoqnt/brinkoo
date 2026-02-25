@@ -1,3 +1,6 @@
+import 'package:brasil_fields/brasil_fields.dart';
+import 'package:brinquedoteca_flutter/model/crianca.dart';
+import 'package:brinquedoteca_flutter/model/responsavel.dart';
 import 'package:characters/characters.dart';
 
 class Utils {
@@ -35,5 +38,23 @@ class Utils {
     }
 
     return buffer.toString().toLowerCase();
+  }
+
+  static String obterTelefoneResponsavelCrianca(Crianca crianca){
+    try{
+      Responsavel responsavel;
+      try{
+        responsavel = crianca.responsaveis!.firstWhere((element) => element.parentesco?.toLowerCase() == "mae");
+      } catch(e){
+        responsavel = crianca.responsaveis!.first;
+      }
+      try{
+        return UtilBrasilFields.obterTelefone(responsavel.celular!);
+      } catch(e){
+        return responsavel.celular!;
+      }
+    } catch(e){
+      return "";
+    }
   }
 }

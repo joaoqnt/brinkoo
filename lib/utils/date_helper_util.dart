@@ -56,18 +56,30 @@ class DateHelperUtil {
   }
 
   /// Converte uma string no formato 'dd/MM/yyyy' para um objeto DateTime
-  static DateTime? parseBrDateToDateTime(String brDate) {
+  static DateTime? parseBrDateToDateTime(String value) {
+    if (value.isEmpty) return null;
+
     try {
-      final parts = brDate.split('/');
+      final parts = value.split('/');
       if (parts.length != 3) return null;
 
-      final day = int.parse(parts[0]);
-      final month = int.parse(parts[1]);
-      final year = int.parse(parts[2]);
+      int dia = int.parse(parts[0]);
+      int mes = int.parse(parts[1]);
+      int ano = int.parse(parts[2]);
 
-      return DateTime(year, month, day);
+      // Se ano tiver 2 dígitos
+      if (parts[2].length == 2) {
+        if (ano <= 29) {
+          ano += 2000;
+        } else {
+          ano += 1900;
+        }
+      }
+
+      return DateTime(ano, mes, dia);
     } catch (e) {
       return null;
     }
   }
+
 }

@@ -39,6 +39,7 @@ class CardCheckinTimer extends StatelessWidget {
           context,
           MaterialPageRoute(builder: (context) => CadastroCheckinView(
             checkin:checkin,
+            listController: controller,
           ))
       ),
       child: Card(
@@ -48,15 +49,13 @@ class CardCheckinTimer extends StatelessWidget {
               flex: 8, // 90%
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                child: urlImage.isNotEmpty
-                    ? Image.network(
+                child: urlImage.isNotEmpty ? Image.network(
                   urlImage,
                   width: double.infinity,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) =>
                   const Center(child: Icon(Icons.broken_image)),
-                )
-                    : const Center(child: Icon(Icons.image_not_supported)),
+                ) : const Center(child: Icon(Icons.image_not_supported)),
               ),
             ),
             Expanded(

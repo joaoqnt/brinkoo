@@ -9,12 +9,13 @@ class Parceiro {
   String? email;
   String? endereco;
   String? estado;
+  String? numero;
   String? urlImage;
   bool? fornecedor;
   bool? funcionario;
   int? id;
   bool? pessoaFisica;
-  String? telefone;
+  String? celular;
   String? inscricaoEstadual;
   bool? transportador;
 
@@ -32,10 +33,11 @@ class Parceiro {
         this.estado,
         this.fornecedor,
         this.funcionario,
+        this.numero,
         this.inscricaoEstadual,
         this.id,
         this.pessoaFisica,
-        this.telefone,
+        this.celular,
         this.transportador});
 
   Parceiro.fromJson(Map<String, dynamic> json) {
@@ -53,9 +55,10 @@ class Parceiro {
     funcionario = json['funcionario'];
     id = json['id'];
     pessoaFisica = json['pessoa_fisica'];
-    telefone = json['telefone'].toString();
+    celular = json['celular'].toString();
     transportador = json['transportador'];
     urlImage = json['url_image'];
+    numero = json['numero'];
     inscricaoEstadual = json['inscricao_estadual']?.toString();
   }
 
@@ -75,10 +78,11 @@ class Parceiro {
     data['funcionario'] = this.funcionario;
     data['id'] = this.id;
     data['pessoa_fisica'] = this.pessoaFisica;
-    data['telefone'] = this.telefone;
+    data['celular'] = this.celular;
     data['transportador'] = this.transportador;
     data['url_image'] = this.urlImage;
     data['inscricao_estadual'] = this.inscricaoEstadual;
+    data['numero'] = this.numero;
     return data;
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:brasil_fields/brasil_fields.dart';
 import 'package:brinquedoteca_flutter/component/custom_snackbar.dart';
 import 'package:brinquedoteca_flutter/model/atividade.dart';
 import 'package:brinquedoteca_flutter/model/checkin.dart';
@@ -10,6 +9,7 @@ import 'package:brinquedoteca_flutter/model/forma_pagamento.dart';
 import 'package:brinquedoteca_flutter/model/guarda_volume.dart';
 import 'package:brinquedoteca_flutter/model/parametro.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
+import 'package:brinquedoteca_flutter/model/usuario.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
 import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +29,12 @@ abstract class _CadastroCheckinController with Store {
     fromJson:(p0) => Crianca.fromJson(p0),
   );
   final _parametroRepository = GenericRepository(
-    endpoint: "parametro",
+    endpoint: "parametro_geral",
     fromJson:(p0) => Parametro.fromJson(p0),
+  );
+  final _atividadeRepository = GenericRepository(
+    endpoint: "atividades",
+    fromJson:(p0) => Atividade.fromJson(p0),
   );
   TextEditingController tecPesquisa = TextEditingController();
   TextEditingController tecMinutosDesejados = TextEditingController(text: "60");
@@ -46,18 +50,28 @@ abstract class _CadastroCheckinController with Store {
   Uint8List? responsavelEntradaImage;
   @observable
   Uint8List? responsavelSaidaImage;
+  @observable
   Responsavel? responsavelEntradaSelected;
+  @observable
   Responsavel? responsavelSaidaSelected;
   GuardaVolume? guardaVolumeSelected;
   FormaPagamento? formaPagamentoSelected;
-  List<Atividade> atividades = [];
-  List<Responsavel> responsaveisPossiveisCheckout = [];
+  @observable
+  ObservableList<Atividade> atividades = ObservableList.of([]);
+  @observable
+  ObservableList<Atividade> atividadesSelected = ObservableList.of([]);
+  @observable
+  ObservableList<Responsavel> responsaveisPossiveisCheckout = ObservableList.of([]);
   Parametro? parametro;
   Timer? _timer;
   @observable
   double valorFinal = 0;
   @observable
   Duration tempoDecorrido = Duration.zero;
+  @observable
+  Usuario? usuarioEntrada;
+  @observable
+  Usuario? usuarioSaida;
 
   @action
   Future<List<Crianca>> getCriancas() async{
@@ -98,19 +112,34 @@ abstract class _CadastroCheckinController with Store {
       criancaSelected = checkin.crianca;
       responsavelEntradaSelected = checkin.responsavelEntrada;
       responsavelSaidaSelected = checkin.responsavelSaida;
-      atividades = checkin.atividades??[];
-      responsaveisPossiveisCheckout = checkin.responsaveisPossiveisCheckout??[];
+      try{
+        setAtividades(checkin.crianca!,checkin: checkin);
+      } catch(e){
+
+      }
+      setResponsaveisPossiveisCheckout(checkin.responsaveisPossiveisCheckout??[]);
       tecMinutosDesejados.text = checkin.minutosDesejados.toString();
       guardaVolumeSelected = checkin.guardaVolume;
       formaPagamentoSelected = checkin.formaPagamento;
+      try{
+        setUsuarioEntrada(checkin.usuarioEntrada!);
+      } catch(e){
+
+      }
+      try{
+        setUsuarioSaida(checkin.usuarioSaida!);
+      } catch(e){
+
+      }
       print(checkin.guardaVolume);
       print(responsaveisPossiveisCheckout.length);
+
     } else {
       criancaSelected = null;
       responsavelEntradaSelected = null;
       responsavelSaidaSelected = null;
-      atividades = [];
-      responsaveisPossiveisCheckout = [];
+      atividades.clear();
+      responsaveisPossiveisCheckout.clear();
     }
 
     if(checkin?.dataEntrada != null)
@@ -121,6 +150,12 @@ abstract class _CadastroCheckinController with Store {
   setCrianca(Crianca crianca){
     criancaSelected = crianca;
     responsavelEntradaSelected = null;
+    setAtividades(crianca);
+  }
+
+  @action
+  alterCrianca(Crianca crianca){
+    criancaSelected = crianca;
   }
 
   @action
@@ -152,12 +187,24 @@ abstract class _CadastroCheckinController with Store {
     formaPagamentoSelected = formaPagamento;
   }
 
-  setAtividades(List<Atividade> atividades){
-    this.atividades = atividades;
+  @action
+  setAtividades(Crianca crianca,{Checkin? checkin}) async{
+    List<Atividade> atividades = await _atividadeRepository.getAll();
+    this.atividades = ObservableList.of(atividades);
+    if(checkin != null){
+      checkin.atividades?.forEach((atividade) {
+        toggleAtividade(atividade);
+      });
+    } else {
+      crianca.atividades?.forEach((atividade) {
+        toggleAtividade(atividade);
+      });
+    }
   }
 
+  @action
   setResponsaveisPossiveisCheckout(List<Responsavel> responsaveis){
-    responsaveisPossiveisCheckout = responsaveis;
+    responsaveisPossiveisCheckout = ObservableList.of(responsaveis);
   }
 
   _buildCheckin({Checkin? checkin,DateTime? dataSaida}){
@@ -165,14 +212,16 @@ abstract class _CadastroCheckinController with Store {
       crianca: criancaSelected,
       responsavelEntrada: responsavelEntradaSelected,
       dataEntrada: checkin?.dataEntrada??DateTime.now(),
-      atividades: atividades,
+      atividades: atividadesSelected,
+      usuarioEntrada: checkin?.usuarioEntrada??Singleton.instance.usuario,
+      usuarioSaida: dataSaida != null ? checkin?.usuarioSaida??Singleton.instance.usuario : checkin?.usuarioSaida,
       id: checkin?.id,
       urlImageCrianca: checkin?.urlImageCrianca,
       urlImageResponsavelEntrada: checkin?.urlImageResponsavelEntrada,
       responsavelSaida: responsavelSaidaSelected,
       guardaVolume: guardaVolumeSelected,
       formaPagamento: formaPagamentoSelected,
-      valorTotal: checkin?.valorTotal??(valorFinal == 0 ? null : valorFinal),
+      valorTotal: checkin?.valorTotal??(valorFinal),
       urlImageResponsavelSaida: (checkin?.urlImageResponsavelSaida) ??
           ((checkin == null || responsavelSaidaImage == null)
               ? null
@@ -190,7 +239,7 @@ abstract class _CadastroCheckinController with Store {
           ((checkin == null || responsavelEntradaImage == null)
               ? false
               : true),
-      dataSaida: dataSaida,
+      dataSaida: checkin?.dataSaida??dataSaida,
       responsaveisPossiveisCheckout: responsaveisPossiveisCheckout,
       minutosDesejados: int.tryParse(tecMinutosDesejados.text)??60,
       empresa: Singleton.instance.usuario?.empresa
@@ -248,39 +297,54 @@ abstract class _CadastroCheckinController with Store {
   }
 
   bool validate(BuildContext context,{Checkin? checkin}){
-    // if(criancaSelected == null){
-    //   CustomSnackBar.warning(context, "Selecione uma criança");
-    //   return false;
-    // }
-    // if(responsavelEntradaSelected == null){
-    //   CustomSnackBar.warning(context, "Selecione um responsável pelo check-in");
-    //   return false;
-    // }
-    // if(checkin == null){
-    //   if(responsaveisPossiveisCheckout.isEmpty) {
-    //     CustomSnackBar.warning(context, "Adicione ao menos um responsável pelo check-out");
-    //     return false;
-    //   }
-    //   if(criancaImage == null && criancaSelected?.urlImage == null){
-    //    CustomSnackBar.warning(context, "Adicione uma foto da criança");
-    //    return false;
-    //   }
-    //   if(responsavelEntradaImage == null && responsavelEntradaSelected?.urlImage == null){
-    //     CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-in");
-    //     return false;
-    //   }
-    // } else {
-    //   if(checkin.dataSaida == null){
-    //     if(responsavelSaidaSelected == null) {
-    //       CustomSnackBar.warning(context, "Selecione um responsável pelo check-out");
-    //       return false;
-    //     }
-    //     if(responsavelSaidaImage == null && responsavelSaidaSelected?.urlImage == null) {
-    //      CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-out");
-    //      return false;
-    //     }
-    //   }
-    // }
+    if(criancaSelected == null){
+      CustomSnackBar.warning(context, "Selecione uma criança");
+      return false;
+    }
+    if(responsavelEntradaSelected == null){
+      CustomSnackBar.warning(context, "Selecione um responsável pelo check-in");
+      return false;
+    }
+    if(checkin == null){
+      if(responsaveisPossiveisCheckout.isEmpty) {
+        CustomSnackBar.warning(context, "Adicione ao menos um responsável pelo check-out");
+        return false;
+      }
+      if(criancaImage == null && criancaSelected?.urlImage == null){
+       CustomSnackBar.warning(context, "Adicione uma foto da criança");
+       return false;
+      }
+      if(responsavelEntradaImage == null && responsavelEntradaSelected?.urlImage == null){
+        CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-in");
+        return false;
+      }
+    } else {
+      if(checkin.dataSaida == null){
+        if(responsavelSaidaSelected == null) {
+          CustomSnackBar.warning(context, "Selecione um responsável pelo check-out");
+          return false;
+        }
+        if(responsavelSaidaImage == null && responsavelSaidaSelected?.urlImage == null) {
+         CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-out");
+         return false;
+        }
+      }
+    }
     return true;
   }
+
+  @action
+  void toggleAtividade(Atividade atividade) {
+    if (atividadesSelected.any((a) => a.id == atividade.id)) {
+      atividadesSelected.remove(atividadesSelected.where((element) => element.id == atividade.id).first);
+    } else {
+      atividadesSelected.add(atividade);
+    }
+  }
+
+  @action
+  setUsuarioEntrada(Usuario usuario) => usuarioEntrada = usuario;
+
+  @action
+  setUsuarioSaida(Usuario usuario) => usuarioSaida = usuario;
 }

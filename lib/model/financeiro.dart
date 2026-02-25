@@ -12,7 +12,7 @@ class Financeiro {
   Parceiro? parceiro;
   String? receitaDespesa;
   Usuario? usuario;
-  String? valorTotal;
+  double? valorTotal;
 
   Financeiro(
       {this.checkin,

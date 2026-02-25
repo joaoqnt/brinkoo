@@ -58,6 +58,7 @@ class GenericRepository<T> {
   }
 
   Future<T> create(Map<String, dynamic> body) async {
+    print(jsonEncode(body));
     final response = await _dio.post(
       endpoint,
       data: jsonEncode(body),

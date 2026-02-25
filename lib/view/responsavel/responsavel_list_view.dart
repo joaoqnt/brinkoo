@@ -53,6 +53,7 @@ class _ResponsavelListViewState extends State<ResponsavelListView> {
             RowSearchTextfield(
               tecController: _controller.tecPesquisa,
               widget: CadastroResponsavelView(),
+              onChanged: (p0) async => await _controller.getResponsaveis(refresh: true),
             ),
             Expanded(
               child: Observer(

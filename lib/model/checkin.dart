@@ -5,6 +5,7 @@ import 'package:brinquedoteca_flutter/model/empresa.dart';
 import 'package:brinquedoteca_flutter/model/forma_pagamento.dart';
 import 'package:brinquedoteca_flutter/model/guarda_volume.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
+import 'package:brinquedoteca_flutter/model/usuario.dart';
 
 class Checkin {
   Crianca? crianca;
@@ -28,6 +29,8 @@ class Checkin {
   bool? useUrlImageResponsavelEntrada;
   bool? useUrlImageResponsavelSaida;
   int? minutosDesejados;
+  Usuario? usuarioEntrada;
+  Usuario? usuarioSaida;
 
   Checkin({
     this.crianca,
@@ -51,6 +54,8 @@ class Checkin {
     this.minutosDesejados,
     this.empresa,
     this.convenio,
+    this.usuarioEntrada,
+    this.usuarioSaida,
   });
 
   Checkin.fromJson(Map<String, dynamic> json) {
@@ -165,6 +170,23 @@ class Checkin {
     } catch (e) {
       convenio = null;
     }
+
+    try {
+      usuarioEntrada = json['usuario_entrada'] != null
+          ? Usuario.fromJson(json['usuario_entrada'])
+          : null;
+    } catch (e) {
+      print(e);
+      usuarioEntrada = null;
+    }
+
+    try {
+      usuarioSaida = json['usuario_saida'] != null
+          ? Usuario.fromJson(json['usuario_saida'])
+          : null;
+    } catch (e) {
+      usuarioSaida = null;
+    }
   }
 
 
@@ -198,6 +220,8 @@ class Checkin {
       data['responsaveis_possiveis_checkout'] = this.responsaveisPossiveisCheckout!.map((v) => v.toJson()).toList();
     }
     data['responsavel_saida'] = this.responsavelSaida?.id;
+    data['usuario_saida'] = this.usuarioSaida?.id;
+    data['usuario_entrada'] = this.usuarioEntrada?.id;
     data['valor_total'] = this.valorTotal;
     data['use_url_image_crianca'] = this.useUrlImageCrianca;
     data['use_url_image_responsavel_entrada'] = this.useUrlImageResponsavelEntrada;

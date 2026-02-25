@@ -1,8 +1,10 @@
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:brinquedoteca_flutter/component/custom_radio.dart';
 import 'package:brinquedoteca_flutter/component/custom_snackbar.dart';
 import 'package:brinquedoteca_flutter/component/custom_textformfield.dart';
 import 'package:brinquedoteca_flutter/component/drawer/custom_drawer.dart';
 import 'package:brinquedoteca_flutter/component/foto/foto_alter_component.dart';
+import 'package:brinquedoteca_flutter/component/responsive_field.dart';
 import 'package:brinquedoteca_flutter/controller/parceiro/cadastro_parceiro_controller.dart';
 import 'package:brinquedoteca_flutter/model/parceiro.dart';
 import 'package:brinquedoteca_flutter/utils/responsive.dart';
@@ -23,6 +25,8 @@ class CadastroParceiroView extends StatefulWidget {
 
 class _CadastroParceiroViewState extends State<CadastroParceiroView> {
   final _controller = CadastroParceiroController();
+  final FocusNode _cepFocusNode = FocusNode();
+  final FocusNode _cnpjFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -73,35 +77,79 @@ class _CadastroParceiroViewState extends State<CadastroParceiroView> {
                         ),
                       ],
                     ),
-                    SwitchListTile(
-                      title: Text("Pessoa Física"),
-                      value: _controller.pessoaFisica,
-                      onChanged: _controller.setPessoaFisica,
-                    ),
                     Row(
                       children: [
-                        Expanded(
-                          child: CustomTextFormField(
-                            labelText: "CPF / CNPJ",
-                            controller: _controller.tecCpfCnpj,
-                            validator: (p0) {
-                              if(!_controller.pessoaFisica){
-                                if(!UtilBrasilFields.isCNPJValido(_controller.tecCpfCnpj.text)){
-                                  return "Cnpj inválido" ;
-                                }
-                              } else {
-                                if(!UtilBrasilFields.isCPFValido(_controller.tecCpfCnpj.text)){
-                                  return "CPF inválido" ;
-                                }
-                              }
-                              return null;
-                            },
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              !_controller.pessoaFisica ? CnpjInputFormatter() : CpfInputFormatter()
-                            ],
+                        SizedBox(
+                          width: 220,
+                          child: CustomRadio<bool>(
+                            title: "Tipo de Pessoa",
+                            options: [true,false],
+                            value: _controller.pessoaFisica,
+                            label: (g) => g ? "Física" : "Jurídica",
+                            onChanged: (value) => _controller.setPessoaFisica(value!),
                           ),
                         ),
+                        SizedBox(width: 20),
+                        Expanded(
+                          child: Focus(
+                            focusNode: _cnpjFocusNode,
+                            onKeyEvent: (node, event) {
+                              if (event is KeyDownEvent &&
+                                  event.logicalKey == LogicalKeyboardKey.tab) {
+
+                                if (_controller.tecCpfCnpj.text.isNotEmpty
+                                    && UtilBrasilFields.isCNPJValido(_controller.tecCpfCnpj.text)
+                                    && _controller.pessoaFisica == false
+                                ) {
+                                  _controller.setDataByCnpj();
+                                } else {
+                                  if(_controller.pessoaFisica == false)
+                                    CustomSnackBar.error(context, 'Cnpj inválido');
+                                }
+                              }
+                              return KeyEventResult.ignored;
+                            },
+                            child: CustomTextFormField(
+                              labelText: "CPF / CNPJ",
+                              controller: _controller.tecCpfCnpj,
+                              validator: (p0) {
+                                if(!_controller.pessoaFisica){
+                                  if(!UtilBrasilFields.isCNPJValido(_controller.tecCpfCnpj.text)){
+                                    return "Cnpj inválido" ;
+                                  }
+                                } else {
+                                  if(!UtilBrasilFields.isCPFValido(_controller.tecCpfCnpj.text)){
+                                    return "CPF inválido" ;
+                                  }
+                                }
+                                return null;
+                              },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                !_controller.pessoaFisica ? CnpjInputFormatter() : CpfInputFormatter()
+                              ],
+                            ),
+                          ),
+                        ),
+                        if(_controller.pessoaFisica == false)...[
+                          SizedBox(width: 10),
+                          FilledButton(
+                              onPressed: () async{
+                                if (_controller.tecCpfCnpj.text.isNotEmpty
+                                    && UtilBrasilFields.isCNPJValido(_controller.tecCpfCnpj.text)
+                                    && _controller.pessoaFisica == false
+                                ) {
+                                  _controller.setDataByCnpj();
+                                  // _controller.setEnderecoByCep();
+                                } else {
+                                  if(_controller.pessoaFisica == false) {
+                                    CustomSnackBar.error(context, 'Cnpj inválido');
+                                  }
+                                }
+                              },
+                              child: Icon(Icons.search)
+                          ),
+                        ],
                         SizedBox(width: 20),
                         Expanded(
                           child: CustomTextFormField(
@@ -133,13 +181,29 @@ class _CadastroParceiroViewState extends State<CadastroParceiroView> {
                         ),
                         SizedBox(width: 20),
                         Expanded(
-                          child: CustomTextFormField(
-                            labelText: "CEP",
-                            controller: _controller.tecCep,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              CepInputFormatter()
-                            ],
+                          child: Focus(
+                            focusNode: _cepFocusNode,
+                            onKeyEvent: (node, event) {
+                              if (event is KeyDownEvent &&
+                                  event.logicalKey == LogicalKeyboardKey.tab) {
+
+                                if (_controller.tecCep.text.isNotEmpty &&
+                                    UtilBrasilFields.removeCaracteres(_controller.tecCep.text).length == 8) {
+                                  _controller.setEnderecoByCep();
+                                } else {
+                                  CustomSnackBar.error(context, 'Cep inválido');
+                                }
+                              }
+                              return KeyEventResult.ignored;
+                            },
+                            child: CustomTextFormField(
+                              labelText: "CEP",
+                              controller: _controller.tecCep,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                CepInputFormatter()
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(width: 10),
@@ -160,15 +224,16 @@ class _CadastroParceiroViewState extends State<CadastroParceiroView> {
                       children: [
                         Expanded(
                           child: CustomTextFormField(
-                            labelText: "Cidade",
-                            controller: _controller.tecCidade,
+                            labelText: "Endereço",
+                            controller: _controller.tecEndereco,
                           ),
                         ),
                         SizedBox(width: 20),
-                        Expanded(
+                        ResponsiveField(
+                          width: 200,
                           child: CustomTextFormField(
-                            labelText: "Estado",
-                            controller: _controller.tecEstado,
+                            labelText: "Número",
+                            controller: _controller.tecNumero,
                           ),
                         ),
                       ],
@@ -184,8 +249,16 @@ class _CadastroParceiroViewState extends State<CadastroParceiroView> {
                         SizedBox(width: 20),
                         Expanded(
                           child: CustomTextFormField(
-                            labelText: "Endereço",
-                            controller: _controller.tecEndereco,
+                            labelText: "Cidade",
+                            controller: _controller.tecCidade,
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        ResponsiveField(
+                          width: 200,
+                          child: CustomTextFormField(
+                            labelText: "Estado",
+                            controller: _controller.tecEstado,
                           ),
                         ),
                       ],

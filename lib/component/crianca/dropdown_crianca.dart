@@ -28,10 +28,15 @@ class DropdownCrianca extends StatelessWidget {
     return SizedBox(
       width: double.maxFinite,
       child: DropdownSearch<Crianca>(
+
         popupProps: PopupProps.menu(
           showSearchBox: true,
           itemBuilder: (context, item, isDisabled, isSelected) => CardCrianca(crianca: item),
+          searchFieldProps: TextFieldProps(
+            autofocus: true, // já abre com o teclado ativo
+          ),
         ),
+
         dropdownBuilder: (context, selectedItem) {
           if (selectedItem == null) {
             return const ListTile(
@@ -43,10 +48,10 @@ class DropdownCrianca extends StatelessWidget {
         },
         items: (String filter, LoadProps? loadProps) async {
           try {
-            final Map<String, dynamic> filtros = {'limit': 50};
+            final Map<String, dynamic> filtros = {'limit': 50,'ativo':true};
 
             if (filter.isNotEmpty) {
-              filtros['unaccent(LOWER(c.nome)'] = filter;
+              filtros['unaccent(LOWER(c.nome))'] = filter;
             }
 
             return await _repository.getAll(filters: filtros);
@@ -62,17 +67,6 @@ class DropdownCrianca extends StatelessWidget {
         validator: required
             ? (value) => value == null ? 'Obrigatório' : null
             : null,
-        //decoratorProps: DropDownDecoratorProps(
-        //  decoration: InputDecoration(
-        //    prefixIcon: Icon(Icons.child_care),
-        //    hintText: "Criança",
-        //    labelText: "Criança",
-        //    filled: true,
-        //    fillColor: Colors.white,
-        //    border: OutlineInputBorder(),
-        //    isDense: true,
-        //  ),
-        //),
       ),
     );
   }

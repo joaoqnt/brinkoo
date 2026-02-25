@@ -36,9 +36,11 @@ class _ParceiroListViewState extends State<ParceiroListView> {
       body: Column(
         spacing: 10,
         children: [
+          SizedBox(height: 1),
           RowSearchTextfield(
-              tecController: _controller.tecPesquisa,
-              widget: CadastroParceiroView(),
+            tecController: _controller.tecPesquisa,
+            widget: CadastroParceiroView(),
+            onChanged: (p0) => _controller.getParceiros(reset: true),
           ),
           Expanded(
               child: Observer(

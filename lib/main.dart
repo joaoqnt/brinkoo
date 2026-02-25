@@ -17,8 +17,7 @@ Future<void> main() async {
   final prefsUtil = SharedPreferencesUtil();
   final Usuario? usuario = await prefsUtil.loadUserFromPreferences();
 
-  // Define rota inicial dependendo se o usuário está logado
-  final String initialRoute = (usuario != null) ? '/home' : '/login';
+  final String initialRoute = '/';
 
   runApp(MyApp(initialRoute: initialRoute));
 }
@@ -34,16 +33,18 @@ class MyApp extends StatelessWidget {
       title: 'Brinquedoteca Virtual',
       theme: brinquedotecaTheme,
       initialRoute: initialRoute,
+      showSemanticsDebugger: false,
       routes: {
-        '/login': (context) => const LoginView(),
+        '/': (context) => const LoginView(),
         '/crianca': (context) => CriancaListView(),
         '/checkin': (context) => const CheckinListView(),
         '/responsavel': (context) => ResponsavelListView(),
         '/cadastros': (context) => CadastroView(),
         '/home': (context) => HomeView(),
-        '/parametro': (context) => ParametroView(),
+        '/parametro_geral': (context) => ParametroView(),
         '/financeiros': (context) => FinanceiroView(),
       },
+
     );
   }
 }

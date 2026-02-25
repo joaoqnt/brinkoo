@@ -37,110 +37,152 @@ class _LoginViewState extends State<LoginView> {
                   child: Material(
                     elevation: Responsive.isMobile(context) ? 0 : 10,
                     borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width *
-                          (Responsive.isMobile(context) ? 1 : 0.3),
-                      // 🔹 Apenas no desktop fixa altura
-                      height: Responsive.isMobile(context)
-                          ? null
-                          : MediaQuery.of(context).size.height * 0.65,
-                      padding: EdgeInsets.all(20),
-                      color: Colors.white,
-                      child: Center(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    height: Responsive.isMobile(context) ? 70 : 120,
-                                    padding: EdgeInsets.all(8),
-                                    child: Image.asset("assets/logo.jpeg", fit: BoxFit.cover),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Flexible(
-                                    child: Text(
-                                      'Brinkoo',
-                                      style: TextStyle(
-                                        fontSize:
-                                        Responsive.isMobile(context) ? 36 : 60,
-                                        fontWeight: FontWeight.bold,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final width = constraints.maxWidth;
+
+                        double containerWidth;
+                        double horizontalPadding;
+
+                        if (width < 600) {
+                          // 📱 Mobile
+                          containerWidth = width;
+                          horizontalPadding = 20;
+                        } else if (width < 1024) {
+                          // 📲 Tablet
+                          containerWidth = width * 0.6;
+                          horizontalPadding = 28;
+                        } else {
+                          // 🖥 Desktop
+                          containerWidth = 420; // largura fixa elegante
+                          horizontalPadding = 32;
+                        }
+
+                        return Observer(
+                          builder: (context) {
+                            return Center(
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                width: containerWidth,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: horizontalPadding,
+                                  vertical: 32,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            height: width < 600 ? 70 : 100,
+                                            padding: const EdgeInsets.all(8),
+                                            child: Image.asset(
+                                              "assets/logo.jpeg",
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Flexible(
+                                            child: Text(
+                                              'Brinkoo',
+                                              style: TextStyle(
+                                                fontSize: width < 600 ? 36 : 48,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              SizedBox(height: 20),
-                              CustomTextFormField(
-                                hintText: "Login",
-                                controller: _controller.tecLogin,
-                                prefixIcon: Icon(Icons.person),
-                                required: true,
-                              ),
-                              SizedBox(height: 15),
-                              CustomTextFormField(
-                                hintText: "Senha",
-                                controller: _controller.tecSenha,
-                                obscureText: !_controller.isVisible,
-                                prefixIcon: Icon(Icons.lock),
-                                required: true,
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    _controller.toggleVisibility();
-                                  },
-                                  icon: Icon(
-                                    _controller.isVisible
-                                        ? Icons.visibility_off
-                                        : Icons.visibility,
+                                      const SizedBox(height: 30),
+
+                                      CustomTextFormField(
+                                        hintText: "Login",
+                                        controller: _controller.tecLogin,
+                                        prefixIcon: const Icon(Icons.person),
+                                        required: true,
+                                      ),
+
+                                      const SizedBox(height: 15),
+
+                                      CustomTextFormField(
+                                        hintText: "Senha",
+                                        controller: _controller.tecSenha,
+                                        obscureText: !_controller.isVisible,
+                                        maxLines: 1,
+                                        prefixIcon: const Icon(Icons.lock),
+                                        required: true,
+                                        suffixIcon: IconButton(
+                                          onPressed: () => _controller.toggleVisibility(),
+                                          icon: Icon(
+                                            _controller.isVisible
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                          ),
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 15),
+
+                                      CustomTextFormField(
+                                        hintText: "Empresa",
+                                        prefixIcon: const Icon(Icons.business),
+                                        controller: _controller.tecEmpresa,
+                                        required: true,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly,
+                                          CnpjInputFormatter(),
+                                        ],
+                                      ),
+
+                                      const SizedBox(height: 30),
+
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: FilledButton(
+                                          onPressed: () async {
+                                            if (_controller.formKey.currentState!.validate()) {
+                                              try {
+                                                Usuario? usuario = await _controller.doLogin();
+                                                if (usuario != null) {
+                                                  Navigator.of(context).pushNamed('/home');
+                                                } else {
+                                                  CustomSnackBar.error(
+                                                      context, "Usuário não encontrado");
+                                                }
+                                              } catch (e) {
+                                                CustomSnackBar.error(
+                                                    context, "Dados incorretos!");
+                                              }
+                                            }
+                                          },
+                                          child: _controller.isLoading
+                                              ? const SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                              : const Text("Entrar"),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 15),
-                              CustomTextFormField(
-                                hintText: "Empresa",
-                                prefixIcon: Icon(Icons.business),
-                                controller: _controller.tecEmpresa,
-                                required: true,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  CnpjInputFormatter()
-                                ],
-                              ),
-                              SizedBox(height: 25),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: FilledButton(
-                                      onPressed: () async {
-                                        if(_controller.formKey.currentState!.validate()){
-                                          try{
-                                            Usuario? usuario = await _controller.doLogin();
-                                            if(usuario != null) {
-
-                                              Navigator.of(context).pushNamed('/home');
-                                            } else {
-                                              CustomSnackBar.error(context, "Usuário não encontrado");
-                                            }
-                                          } catch(e){
-                                            CustomSnackBar.error(context, "Dados incorretos!");
-                                          }
-                                        }
-                                      },
-                                      child: _controller.isLoading
-                                          ? Center(child: CircularProgressIndicator(color: Colors.white,))
-                                          : Text("Entrar"),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                            );
+                          }
+                        );
+                      },
+                    )
                   ),
                 ),
               );

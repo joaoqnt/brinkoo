@@ -1,3 +1,4 @@
+import 'package:brinquedoteca_flutter/model/atividade.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
 
 class Crianca {
@@ -11,22 +12,27 @@ class Crianca {
   String? nome;
   String? observacoes;
   List<Responsavel>? responsaveis;
+  List<Atividade>? atividades;
   String? sexo;
   String? urlImage;
+  bool? ativo;
 
-  Crianca(
-      {this.alergias,
-        this.dataCadastro,
-        this.dataImagem,
-        this.dataNascimento,
-        this.grupoSanguineo,
-        this.id,
-        this.necessidadesEspeciais,
-        this.nome,
-        this.observacoes,
-        this.responsaveis,
-        this.sexo,
-        this.urlImage});
+  Crianca({
+    this.alergias,
+    this.dataCadastro,
+    this.dataImagem,
+    this.dataNascimento,
+    this.grupoSanguineo,
+    this.id,
+    this.necessidadesEspeciais,
+    this.nome,
+    this.observacoes,
+    this.responsaveis,
+    this.atividades,
+    this.sexo,
+    this.urlImage,
+    this.ativo,
+  });
 
   Crianca.fromJson(Map<String, dynamic> json) {
     alergias = json['alergias'];
@@ -59,8 +65,15 @@ class Crianca {
         responsaveis!.add(new Responsavel.fromJson(v));
       });
     }
+    if (json['atividades'] != null) {
+      atividades = <Atividade>[];
+      json['atividades'].forEach((v) {
+        atividades!.add(new Atividade.fromJson(v));
+      });
+    }
     sexo = json['sexo'];
     urlImage = json['url_image'];
+    ativo = json['ativo'];
   }
 
   Map<String, dynamic> toJson() {
@@ -77,8 +90,12 @@ class Crianca {
     if (this.responsaveis != null) {
       data['responsaveis'] = this.responsaveis!.map((v) => v.toJson()).toList();
     }
+    if (this.atividades != null) {
+      data['atividades'] = this.atividades!.map((v) => v.toJson()).toList();
+    }
     data['sexo'] = this.sexo;
     data['url_image'] = this.urlImage;
+    data['ativo'] = this.ativo;
     return data;
   }
 

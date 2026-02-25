@@ -19,10 +19,10 @@ class FotoAlterComponent extends StatelessWidget {
     super.key,
     this.capturedImageBytes,
     this.imageUrl,
-    this.width = 160,
-    this.height = 160,
+    this.width = 120,
+    this.height = 120,
     this.borderColor = Colors.blue,
-    this.borderWidth = 2.0,
+    this.borderWidth = 1.0,
     this.onRemove,
     this.onEdit,
     this.onAdd,
@@ -46,7 +46,8 @@ class FotoAlterComponent extends StatelessWidget {
             width: width,
             height: height,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
+              shape: BoxShape.circle,
+              // borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: hasImage ? borderColor : Colors.grey,
                 width: borderWidth,
@@ -58,8 +59,8 @@ class FotoAlterComponent extends StatelessWidget {
 
         // Botão de adicionar no canto inferior direito
         Positioned(
-          bottom: -16,
-          right: -16,
+          bottom: -8,
+          right: -8,
           child: FloatingActionButton(
             mini: true,
             backgroundColor: Colors.blue,
@@ -119,8 +120,7 @@ class FotoAlterComponent extends StatelessWidget {
 
   Widget _buildImageContent() {
     if (capturedImageBytes != null) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+      return ClipOval(
         child: Image.memory(
           capturedImageBytes!,
           fit: BoxFit.cover,
@@ -129,8 +129,7 @@ class FotoAlterComponent extends StatelessWidget {
         ),
       );
     } else if (imageUrl != null) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+      return ClipOval(
         child: Image.network(
           imageUrl!,
           fit: BoxFit.cover,
@@ -140,11 +139,10 @@ class FotoAlterComponent extends StatelessWidget {
       );
     } else {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.image, color: Colors.grey, size: width * 0.25),
-          ],
+        child: Icon(
+          Icons.image,
+          color: Colors.grey,
+          size: width * 0.25,
         ),
       );
     }

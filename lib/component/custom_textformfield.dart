@@ -62,7 +62,7 @@ class CustomTextFormField extends StatelessWidget {
     this.keyboardType,
     this.obscureText = false,
     this.autofocus = false,
-    this.maxLines = 1,
+    this.maxLines = null,
     this.minLines,
     this.maxLength,
     this.prefixIcon,

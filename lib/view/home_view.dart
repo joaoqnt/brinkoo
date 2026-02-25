@@ -46,7 +46,7 @@ class _HomeViewState extends State<HomeView> {
                     Expanded(
                       child: RowSearchTextfield(
                         tecController: _controller.tecPesquisa,
-                        widget: CadastroCheckinView(),
+                        widget: CadastroCheckinView(inicioController: _controller,),
                       ),
                     ),
                   ],

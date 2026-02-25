@@ -3,14 +3,17 @@ import 'dart:typed_data';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:brinquedoteca_flutter/component/custom_snackbar.dart';
 import 'package:brinquedoteca_flutter/controller/responsavel/cadastro_responsavel_controller.dart';
+import 'package:brinquedoteca_flutter/model/atividade.dart';
 import 'package:brinquedoteca_flutter/model/crianca.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
 import 'package:brinquedoteca_flutter/utils/date_helper_util.dart';
 import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:brinquedoteca_flutter/utils/take_photo.dart';
+import 'package:brinquedoteca_flutter/utils/utils.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobx/mobx.dart';
 
 part 'cadastro_crianca_controller.g.dart';
@@ -20,6 +23,7 @@ class CadastroCriancaController = _CadastroCriancaController with _$CadastroCria
 abstract class _CadastroCriancaController with Store {
   TextEditingController tecNomeCrianca = TextEditingController();
   TextEditingController tecDataCrianca = TextEditingController();
+  TextEditingController tecIdadeCrianca = TextEditingController();
   TextEditingController tecGrupoSanguineoCrianca = TextEditingController();
   TextEditingController tecAlergiaCrianca = TextEditingController();
   TextEditingController tecObservacaoCrianca = TextEditingController();
@@ -27,6 +31,10 @@ abstract class _CadastroCriancaController with Store {
   final _criancaRepository = GenericRepository(
       endpoint: "criancas",
       fromJson:(p0) => Crianca.fromJson(p0),
+  );
+  final _atividadeRepository = GenericRepository(
+      endpoint: "atividades",
+      fromJson:(p0) => Atividade.fromJson(p0),
   );
   Map<String,String> sexos = {
     "M":"Masculino",
@@ -66,6 +74,12 @@ abstract class _CadastroCriancaController with Store {
   bool isLoading = false;
   @observable
   Crianca? criancaSelected;
+  @observable
+  ObservableList<Atividade> atividadesSelected = ObservableList.of([]);
+  @observable
+  ObservableList<Atividade> atividades = ObservableList.of([]);
+  @observable
+  int radioAtivo = 0;
   Map<String,String>  sexoCrianca = {"M":"Masculino"};
 
   @action
@@ -135,8 +149,8 @@ abstract class _CadastroCriancaController with Store {
   Future createCrianca(BuildContext context) async{
     isLoading = true;
     try{
-      print(jsonEncode(_buildCrianca().toJson()));
-      Crianca crianca = await _criancaRepository.create(_buildCrianca().toJson());
+      print(jsonEncode(buildCrianca().toJson()));
+      Crianca crianca = await _criancaRepository.create(buildCrianca().toJson());
       await _uploadImages(crianca);
       CustomSnackBar.success(context, "Cadastrado com sucesso");
     } catch(e){
@@ -150,9 +164,9 @@ abstract class _CadastroCriancaController with Store {
   Future updateCrianca(BuildContext context, Crianca crianca) async{
     isLoading = true;
     try{
-      print(jsonEncode(_buildCrianca(crianca:crianca).toJson()));
-      Crianca criancaTmp = await _criancaRepository.update(crianca.id,_buildCrianca(crianca:crianca).toJson());
+      Crianca criancaTmp = await _criancaRepository.update(crianca.id,buildCrianca(crianca:crianca).toJson());
       await _uploadImages(crianca);
+      print(jsonEncode(criancaTmp.toJson()));
       CustomSnackBar.success(context, "Atualizado com sucesso");
     } catch(e){
       print(e);
@@ -183,23 +197,26 @@ abstract class _CadastroCriancaController with Store {
     for(int i = 0; i < responsaveisController.length; i++){
       final responsavel = responsaveis[i];
       final controller = responsaveisController[i];
+
       responsavel.nome = controller.tecNome.text;
       responsavel.documento = UtilBrasilFields.removeCaracteres(controller.tecDocumento.text);
-      responsavel.celular = controller.tecTelefone.text;
+      responsavel.celular = UtilBrasilFields.removeCaracteres(controller.tecTelefone.text);
       responsavel.email = controller.tecEmail.text;
       responsavel.cidade = controller.tecCidade.text;
       responsavel.bairro = controller.tecBairro.text;
       responsavel.endereco = controller.tecEndereco.text;
       responsavel.estado = controller.tecEstado.text;
+      responsavel.cep = UtilBrasilFields.removeCaracteres(controller.tecCep.text);
       responsavel.parentesco = relacionamentoSelected[responsavel];
       responsavel.urlImage = "https://brinkoo.com.br/images/${Singleton.instance.tenant}/responsavel/"
           "${UtilBrasilFields.removeCaracteres(controller.tecDocumento.text)}.png";
+      responsavel.numero = controller.tecNumero.text;
       responsaveisTmp.add(responsavel);
     }
     responsaveis = responsaveisTmp;
   }
 
-  Crianca _buildCrianca({Crianca? crianca}){
+  Crianca buildCrianca({Crianca? crianca}){
     _alterResponsaveis();
     Crianca criancaTmp = Crianca(
       id: crianca?.id,
@@ -212,7 +229,9 @@ abstract class _CadastroCriancaController with Store {
       sexo: sexoCrianca.keys.firstOrNull,
       observacoes: tecObservacaoCrianca.text,
       responsaveis: responsaveis,
-      urlImage: crianca?.urlImage
+      urlImage: "https://brinkoo.com.br/images/${Singleton.instance.tenant}/criança/${crianca?.id}.png",
+      atividades: atividadesSelected,
+      ativo: radioAtivo == 0
     );
     return criancaTmp;
   }
@@ -229,7 +248,8 @@ abstract class _CadastroCriancaController with Store {
   }
 
   @action
-  void setCrianca({Crianca? crianca}){
+  Future<void> setCrianca({Crianca? crianca}) async{
+    await _getAtividades();
     if(crianca != null){
       tecNomeCrianca.text = crianca.nome??'';
       if(crianca.dataNascimento != null)
@@ -241,6 +261,40 @@ abstract class _CadastroCriancaController with Store {
       crianca.responsaveis?.forEach((element) {
         addResponsavel(responsavel: element);
       });
+      atividadesSelected.clear();
+      crianca.atividades?.forEach((element) {
+        atividadesSelected.add(element);
+      });
+      setRadioAtivo(crianca.ativo == true ? 0 : 1);
+    }
+    setIdadeCrianca();
+  }
+
+  void setIdadeCrianca(){
+    try{
+      DateTime? dataNascimento = DateHelperUtil.parseBrDateToDateTime(tecDataCrianca.text);
+      tecIdadeCrianca.text = Utils.calcularIdade(dataNascimento!).toString();
+    } catch(e){
+      tecIdadeCrianca.clear();
     }
   }
+
+  @action
+  Future<List<Atividade>> _getAtividades() async {
+    List<Atividade> atividades = await _atividadeRepository.getAll();
+    this.atividades = ObservableList.of(atividades);
+    return atividades;
+  }
+
+  @action
+  void toggleAtividade(Atividade atividade) {
+    if (atividadesSelected.any((a) => a.id == atividade.id)) {
+      atividadesSelected.remove(atividadesSelected.where((element) => element.id == atividade.id).first);
+    } else {
+      atividadesSelected.add(atividade);
+    }
+  }
+
+  @action
+  setRadioAtivo(int value) => radioAtivo = value;
 }

@@ -43,7 +43,7 @@ abstract class _ParceiroListController with Store {
         'offset': _offset,
       };
       if (tecPesquisa.text.isNotEmpty) {
-        filters['descricao'] = tecPesquisa.text;
+        filters['nome'] = tecPesquisa.text;
       }
 
       final novosParceiros = await _parceiroRepository.getAll(filters: filters);

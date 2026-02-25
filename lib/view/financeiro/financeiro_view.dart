@@ -19,8 +19,8 @@ class _FinanceiroViewState extends State<FinanceiroView> with TickerProviderStat
   late TabController _tabController;
 
   final List<Tab> _tabs = const [
-    Tab(text: 'Contas a Pagar'),
     Tab(text: 'Contas a Receber'),
+    Tab(text: 'Contas a Pagar'),
   ];
 
   @override
@@ -65,8 +65,8 @@ class _FinanceiroViewState extends State<FinanceiroView> with TickerProviderStat
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  FinanceiroListView(receitaDespesa: 'd'),
                   FinanceiroListView(receitaDespesa: 'r'),
+                  FinanceiroListView(receitaDespesa: 'd'),
                 ],
               ),
             ),

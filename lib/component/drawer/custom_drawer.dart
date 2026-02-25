@@ -1,3 +1,6 @@
+import 'package:brinquedoteca_flutter/component/custom_circle_avatar.dart';
+import 'package:brinquedoteca_flutter/events/image_preview_dialog.dart';
+import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:flutter/material.dart';
 import 'custom_drawer_item.dart'; // importe corretamente
 
@@ -18,14 +21,16 @@ class CustomDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircleAvatar(
+                CustomCircleAvatar(
+                  urlImage: Singleton.instance.usuario?.urlFoto,
                   radius: 30,
-                  backgroundColor: Colors.grey.shade300,
-                  child: Icon(Icons.person, size: 30, color: Colors.white),
+                  onTap: () {
+                    ImagePreviewDialog.show(context, imageUrl: Singleton.instance.usuario?.urlFoto);
+                  },
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'Nome do usuário',
+                Text(
+                  '${Singleton.instance.usuario?.nome}',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
@@ -63,7 +68,7 @@ class CustomDrawer extends StatelessWidget {
           CustomDrawerItem(
             icon: Icons.settings,
             label: 'Parâmetro',
-            routeName: '/parametro',
+            routeName: '/parametro_geral',
           ),
           CustomDrawerItem(
             icon: Icons.shopping_bag,

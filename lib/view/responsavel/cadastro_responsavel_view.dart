@@ -1,7 +1,7 @@
 import 'package:brinquedoteca_flutter/component/custom_appbar.dart';
 import 'package:brinquedoteca_flutter/component/drawer/custom_drawer.dart';
 import 'package:brinquedoteca_flutter/component/foto/foto_alter_component.dart';
-import 'package:brinquedoteca_flutter/component/responsavel/form_cadastro_responsavel_component.dart';
+import 'package:brinquedoteca_flutter/component/responsavel/form/form_cadastro_responsavel_component.dart';
 import 'package:brinquedoteca_flutter/controller/responsavel/cadastro_responsavel_controller.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
 import 'package:brinquedoteca_flutter/view/responsavel/responsavel_list_view.dart';

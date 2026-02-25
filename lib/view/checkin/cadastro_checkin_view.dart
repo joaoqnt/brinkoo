@@ -1,5 +1,6 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:brinquedoteca_flutter/component/atividade/dropdown_atividade.dart';
+import 'package:brinquedoteca_flutter/component/atividade/wrap_atividade.dart';
 import 'package:brinquedoteca_flutter/component/crianca/card_crianca.dart';
 import 'package:brinquedoteca_flutter/component/crianca/dropdown_crianca.dart';
 import 'package:brinquedoteca_flutter/component/custom_appbar.dart';
@@ -11,22 +12,30 @@ import 'package:brinquedoteca_flutter/component/responsavel/dropdown_multiselect
 import 'package:brinquedoteca_flutter/component/responsavel/dropdown_responsavel.dart';
 import 'package:brinquedoteca_flutter/component/row_search_textfield.dart';
 import 'package:brinquedoteca_flutter/component/section_title.dart';
+import 'package:brinquedoteca_flutter/component/usuario/dropdown_usuario.dart';
 import 'package:brinquedoteca_flutter/controller/checkin/cadastro_checkin_controller.dart';
 import 'package:brinquedoteca_flutter/controller/checkin/checkin_list_controller.dart';
+import 'package:brinquedoteca_flutter/controller/inicio_controller.dart';
 import 'package:brinquedoteca_flutter/model/checkin.dart';
 import 'package:brinquedoteca_flutter/model/crianca.dart';
+import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:brinquedoteca_flutter/view/checkin/checkin_list_view.dart';
 import 'package:brinquedoteca_flutter/view/crianca/cadastro_crianca_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:go_router/go_router.dart';
 
 class CadastroCheckinView extends StatelessWidget {
   final _controller = CadastroCheckinController();
+  final CheckinListController? listController;
+  final InicioController? inicioController;
   Checkin? checkin;
   CadastroCheckinView({
     super.key,
     this.checkin,
+    this.listController,
+    this.inicioController,
   });
 
   @override
@@ -48,8 +57,10 @@ class CadastroCheckinView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 10,
                   children: [
+                    // Text("Check-in realizado por ${checkin?.usuarioEntrada?.nome??Singleton.instance.usuario?.nome}"),
                     SectionTitle(text: "Selecione uma criança"),
                     Row(
+                      spacing: 10,
                       children: [
                         Expanded(
                           child: DropdownCrianca(
@@ -58,7 +69,21 @@ class CadastroCheckinView extends StatelessWidget {
                             enabled: checkin == null,
                           ),
                         ),
-                        SizedBox(width: 10),
+                        FilledButton.tonal(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CadastroCriancaView(
+                                        fromCheckin: true,
+                                        crianca: _controller.criancaSelected,
+                                        checkinController: _controller,
+                                      )
+                                  )
+                              );
+                            },
+                            child: Icon(Icons.edit)
+                        ),
                         FilledButton(
                             onPressed: () {
                               Navigator.push(
@@ -103,7 +128,7 @@ class CadastroCheckinView extends StatelessWidget {
                           if (checkin == null) ...[
 
                           ],
-                          SectionTitle(text: "Selecione quem pode ser responsável pelo check-out"),
+                          SectionTitle(text: "Selecione um responsável pelo check-out"),
                           DropdownMultiselectionResponsavel(
                             responsaveis: _controller.criancaSelected!.responsaveis??[],
                             checkin: false,
@@ -117,6 +142,19 @@ class CadastroCheckinView extends StatelessWidget {
                             guardaVolume: _controller.guardaVolumeSelected,
                             required: false,
                             onChanged: (p0) => _controller.setGuardaVolume(p0!),
+                          ),
+                          SectionTitle(text: "Selecione As Atividades"),
+                          WrapAtividade(
+                            atividades: _controller.atividades,
+                            atividadesSelected: _controller.atividadesSelected,
+                            onSelected: (atividade, selected) => _controller.toggleAtividade(atividade),
+                          ),
+                          SectionTitle(text: "Selecione o atendente do check-in"),
+                          DropdownUsuario(
+                            onChanged: (p0) => _controller.setUsuarioEntrada(p0!),
+                            required: true,
+                            enabled: checkin == null,
+                            usuario: _controller.usuarioEntrada,
                           ),
                           if (checkin != null) ...[
                             const Text(
@@ -134,6 +172,14 @@ class CadastroCheckinView extends StatelessWidget {
                               responsavel: _controller.responsavelSaidaSelected,
                               enabled: checkin?.dataSaida == null,
                               checkin: false,
+                            ),
+                            SizedBox(height: 10),
+                            SectionTitle(text: "Selecione o atendente do check-out"),
+                            DropdownUsuario(
+                              onChanged: (p0) => _controller.setUsuarioSaida(p0!),
+                              required: true,
+                              enabled: checkin?.dataSaida == null,
+                              usuario: _controller.usuarioSaida,
                             ),
                             SizedBox(height: 10),
                             const Text(
@@ -160,7 +206,8 @@ class CadastroCheckinView extends StatelessWidget {
                                 ),
                                 Text("${UtilBrasilFields.obterReal((checkin?.valorTotal??_controller.valorFinal))}")
                               ],
-                            )
+                            ),
+                            // Text("Check-out realizado por ${checkin?.usuarioSaida?.nome??Singleton.instance.usuario?.nome}"),
                           ],
                           Wrap(
                             spacing: 20,
@@ -227,10 +274,16 @@ class CadastroCheckinView extends StatelessWidget {
                             child: FilledButton(
                                 onPressed: () async{
                                   if(!_controller.isLoading && _controller.validate(context,checkin: checkin)) {
-                                    if(checkin == null)
+                                    if(checkin == null) {
                                       await _controller.createCheckin(context);
-                                    else
+                                    } else {
                                       await _controller.updateCheckin(checkin!,context);
+                                    }
+
+                                    if(inicioController != null)
+                                      Navigator.of(context).pushNamed('/home');
+                                    else
+                                      Navigator.of(context).pushNamed('/checkin');
                                   }
                                 },
                                 child: _controller.isLoading

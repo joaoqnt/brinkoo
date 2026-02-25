@@ -36,7 +36,7 @@ abstract class _ResponsavelListController with Store {
         filters: {
           'limit': 50,
           'offset': page * 50,
-          if (tecPesquisa.text.isNotEmpty) 'search': tecPesquisa.text,
+          if (tecPesquisa.text.isNotEmpty) 'nome': tecPesquisa.text,
         },
       );
 

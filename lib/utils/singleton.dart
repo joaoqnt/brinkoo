@@ -1,3 +1,4 @@
+import 'package:brinquedoteca_flutter/model/empresa.dart';
 import 'package:brinquedoteca_flutter/model/usuario.dart';
 
 class Singleton {
@@ -16,6 +17,8 @@ class Singleton {
   late String tenant;
 
   Usuario? usuario;
+
+  Empresa? empresa;
 
   // Getter e Setter
   String get pageSelected => _pageSelected;

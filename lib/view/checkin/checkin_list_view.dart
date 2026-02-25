@@ -59,7 +59,7 @@ class _CheckinListViewState extends State<CheckinListView> {
                   onChanged: (p0) async {
                     await _controller.getCheckins(refresh: true); // pesquisa reseta
                   },
-                  widget: CadastroCheckinView(),
+                  widget: CadastroCheckinView(listController: _controller),
                 ),
                 Expanded(
                   child: _controller.checkins.isEmpty && _controller.isLoading

@@ -43,12 +43,16 @@ class DropdownResponsavel extends StatelessWidget {
         popupProps: PopupProps.menu(
           showSearchBox: true,
           itemBuilder: (context, item, isDisabled, isSelected) => CardResponsavel(responsavel: item),
+          searchFieldProps: TextFieldProps(
+            autofocus: true, // já abre com o teclado ativo
+          ),
         ),
         dropdownBuilder: (context, selectedItem) {
           if (selectedItem == null || selectedItem.nome == null) {
             return ListTile(
               leading: Icon(Icons.person),
               title: Text(title??"Selecione um responsável pelo ${checkin ? "check-in" : "check-out"}"),
+              dense: true,
             );
           }
           return CardResponsavel(responsavel: selectedItem,enableOnTap: false,);

@@ -28,6 +28,7 @@ abstract class _CadastroResponsavelController with Store {
   final tecBairro = TextEditingController();
   final tecEstado = TextEditingController();
   final tecCep = TextEditingController();
+  final tecNumero = TextEditingController();
   final _responsavelRepository = GenericRepository(
     endpoint: "responsaveis",
     fromJson:(p0) => Responsavel.fromJson(p0),
@@ -49,9 +50,9 @@ abstract class _CadastroResponsavelController with Store {
   Future createResponsavel(BuildContext context, bool hideParentesco) async{
     isLoading = true;
     try{
-      print(jsonEncode(_buildResponsavel().toJson()));
+      print(jsonEncode(buildResponsavel().toJson()));
       Responsavel responsavel = await _responsavelRepository.create(
-          _buildResponsavel().toJson(hideParentesco: hideParentesco)
+          buildResponsavel().toJson(hideParentesco: hideParentesco)
       );
       await uploadImages(responsavel);
       CustomSnackBar.success(context, "Cadastrado com sucesso");
@@ -66,10 +67,10 @@ abstract class _CadastroResponsavelController with Store {
   Future updateResponsavel(BuildContext context,Responsavel responsavel) async{
     isLoading = true;
     try{
-      print(jsonEncode(_buildResponsavel(responsavelTmp: responsavel).toJson(hideParentesco: true)));
+      print(jsonEncode(buildResponsavel(responsavelTmp: responsavel).toJson(hideParentesco: true)));
       await _responsavelRepository.update(
           responsavel.id,
-          _buildResponsavel(responsavelTmp: responsavel).toJson(hideParentesco: true)
+          buildResponsavel(responsavelTmp: responsavel).toJson(hideParentesco: true)
       );
       if(responsavelImage != null)
         await uploadImages(responsavel);
@@ -89,7 +90,7 @@ abstract class _CadastroResponsavelController with Store {
     );
   }
 
-  Responsavel _buildResponsavel({Responsavel? responsavelTmp}){
+  Responsavel buildResponsavel({Responsavel? responsavelTmp,String? parentesco}){
     Responsavel responsavel = Responsavel(
       id: responsavelTmp?.id,
       nome: tecNome.text,
@@ -100,8 +101,10 @@ abstract class _CadastroResponsavelController with Store {
       documento: UtilBrasilFields.removeCaracteres(tecDocumento.text),
       endereco: tecEndereco.text,
       estado: tecEstado.text,
-      celular: tecTelefone.text,
-      cep: tecCep.text,
+      celular: UtilBrasilFields.removeCaracteres(tecTelefone.text),
+      cep: UtilBrasilFields.removeCaracteres(tecCep.text),
+      numero: tecNumero.text,
+      parentesco: parentesco
     );
     return responsavel;
   }
@@ -125,9 +128,24 @@ abstract class _CadastroResponsavelController with Store {
       tecBairro.text = responsavel.bairro??'';
       tecCidade.text = responsavel.cidade??'';
       tecEmail.text = responsavel.email??'';
-      tecTelefone.text = responsavel.celular??'';
+
+      try{
+        tecTelefone.text = UtilBrasilFields.obterTelefone(responsavel.celular??'');
+      } catch(e){
+        tecTelefone.text = responsavel.celular??'';
+      }
+
       tecNome.text = responsavel.nome??'';
-      tecCep.text = responsavel.cep??'';
+
+      try{
+        tecCep.text = UtilBrasilFields.obterCep(responsavel.cep??'');
+      } catch(e){
+        tecCep.text = responsavel.cep??'';
+      }
+
+      tecNumero.text = responsavel.numero??"";
+
+
     } else {
       responsavelSelected = null;
       tecDocumento.text = '';
@@ -138,6 +156,7 @@ abstract class _CadastroResponsavelController with Store {
       tecEmail.text = '';
       tecTelefone.text = '';
       tecNome.text = '';
+      tecNumero.text = '';
     }
   }
 

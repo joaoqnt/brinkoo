@@ -13,7 +13,7 @@ class ParametroGeralController = _ParametroGeralController with _$ParametroGeral
 
 abstract class _ParametroGeralController with Store {
   final _parametroRepository = GenericRepository(
-    endpoint: "parametro",
+    endpoint: "parametro_geral",
     fromJson: (json) => Parametro.fromJson(json),
   );
 

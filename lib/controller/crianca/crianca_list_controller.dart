@@ -27,10 +27,22 @@ abstract class _CriancaListController with Store {
   bool isLoading = false;
 
   @observable
+  bool isDeleting = false;
+
+  @observable
   bool hasMore = true; // controla se ainda tem mais registros
 
   @observable
   List<Crianca> criancas = ObservableList.of([]);
+
+  final Map<String, Map<String, TextEditingController>> filtersConfig = {
+    "Nome da Criança": {
+      "unaccent(LOWER(c.nome))": TextEditingController()
+    },
+    "Responsável": {
+      "unaccent(LOWER(rf.nome))": TextEditingController()
+    }
+  };
 
   int _offset = 0;
   final int _limit = 50;
@@ -49,19 +61,33 @@ abstract class _CriancaListController with Store {
 
       if (!hasMore) return;
 
-      Map<String,dynamic> filters = {
+      Map<String, dynamic> filters = {
         'limit': _limit,
         'offset': _offset,
       };
-      if(tecPesquisa.text.isNotEmpty)
-        filters['unaccent(LOWER(c.nome))'] = Utils.removerAcentosEMinusculo(tecPesquisa.text);
+
+      // Filtro principal de pesquisa
+      if (tecPesquisa.text.isNotEmpty) {
+        filters['unaccent(LOWER(c.nome))'] =
+            Utils.removerAcentosEMinusculo(tecPesquisa.text);
+      }
+
+      // 🔥 Aqui adiciona dinamicamente os filtros do dialog
+      filtersConfig.forEach((label, mapInterno) {
+        mapInterno.forEach((campo, controller) {
+          if (controller.text.isNotEmpty) {
+            filters[campo] =
+                Utils.removerAcentosEMinusculo(controller.text);
+          }
+        });
+      });
 
       final novaLista = await _criancaRepository.getAll(
-        filters: filters
+        filters: filters,
       );
 
       if (novaLista.isEmpty || novaLista.length < _limit) {
-        hasMore = false; // não tem mais páginas
+        hasMore = false;
       }
 
       criancas.addAll(novaLista);
@@ -72,5 +98,35 @@ abstract class _CriancaListController with Store {
     } finally {
       isLoading = false;
     }
+  }
+
+  @action
+  Future<void> resetarFiltros() async {
+    // Limpa campo de pesquisa principal
+    tecPesquisa.clear();
+
+    // Limpa todos os filtros do dialog
+    filtersConfig.forEach((_, mapInterno) {
+      mapInterno.forEach((_, controller) {
+        controller.clear();
+      });
+    });
+
+    // Recarrega lista do zero
+    await getCriancas(reset: true);
+  }
+
+  @action
+  Future<void> deleteCrianca(BuildContext context, Crianca crianca) async{
+    isDeleting = true;
+    try{
+      await _criancaRepository.delete(crianca.id);
+      await getCriancas(reset: true);
+      CustomSnackBar.success(context, "Removido com sucesso");
+    } catch(e){
+      print(e);
+      CustomSnackBar.error(context, "Erro ao remover.\nSe a criança já tiver alguma movimentação, favor apenas inativar o cadastro.");
+    }
+    isDeleting = false;
   }
 }

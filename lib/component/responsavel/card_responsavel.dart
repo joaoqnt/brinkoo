@@ -1,4 +1,5 @@
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:brinquedoteca_flutter/component/custom_circle_avatar.dart';
 import 'package:brinquedoteca_flutter/events/image_preview_dialog.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
 import 'package:brinquedoteca_flutter/view/responsavel/cadastro_responsavel_view.dart';
@@ -21,19 +22,13 @@ class CardResponsavel extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Row(
           children: [
-            InkWell(
-              onTap: responsavel.urlImage != null && responsavel.urlImage!.isNotEmpty
-                  ? () => ImagePreviewDialog.show(context, imageUrl: responsavel.urlImage!)
-                  : null,
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage: responsavel.urlImage != null && responsavel.urlImage!.isNotEmpty
-                    ? NetworkImage(responsavel.urlImage!)
-                    : null,
-                child: responsavel.urlImage == null || responsavel.urlImage!.isEmpty
-                    ? const Icon(Icons.person, size: 30)
-                    : null,
-              ),
+            CustomCircleAvatar(
+              urlImage: responsavel.urlImage,
+              icon: Icons.person,
+              radius: 30,
+              onTap: () {
+                ImagePreviewDialog.show(context, imageUrl: responsavel.urlImage);
+              },
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -54,6 +49,7 @@ class CardResponsavel extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         UtilBrasilFields.obterTelefone(responsavel.celular??''),
+                          // responsavel.celular??'',
                         style: const TextStyle(fontSize: 13),
                       ),
                     ],

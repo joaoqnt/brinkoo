@@ -49,7 +49,7 @@ abstract class _CheckinListController with Store {
             'ch.empresa':Singleton.instance.usuario?.empresa?.id
         },
       );
-
+      print(novosCheckins.length);
       checkins.addAll(novosCheckins);
       page++;
     } catch (e) {

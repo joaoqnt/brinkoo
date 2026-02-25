@@ -95,7 +95,18 @@ class Usuario {
     nome: json['nome'],
     senha: json['senha'],
     urlFoto: json['url_foto'],
-    empresa: json['empresa'] != null ? Empresa.fromJson(json['empresa']) : null,
+
+    empresa: json['empresa'] != null
+        ? (() {
+      try {
+        return Empresa.fromJson(json['empresa']);
+      } catch (e) {
+        print('Erro ao converter empresa: $e');
+        return null;
+      }
+    })()
+        : null,
+
     permiteAcessarCadastro: json['permite_acessar_cadastro'] ?? false,
     permiteAcessarFinanceiro: json['permite_acessar_financeiro'] ?? false,
     permiteAcessarProduto: json['permite_acessar_produto'] ?? false,

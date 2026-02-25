@@ -34,6 +34,7 @@ abstract class _LoginControllerBase with Store {
   @action
   void toggleVisibility() {
     isVisible = !isVisible;
+    print(isVisible);
   }
 
   setUsuario(){

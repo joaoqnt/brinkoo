@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:brinquedoteca_flutter/component/custom_snackbar.dart';
+import 'package:brinquedoteca_flutter/model/busca_cnpj.dart';
 import 'package:brinquedoteca_flutter/model/endereco_via_cep.dart';
 import 'package:brinquedoteca_flutter/model/parceiro.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
@@ -32,6 +33,7 @@ abstract class _CadastroParceiroController with Store {
   TextEditingController tecBairro = TextEditingController();
   TextEditingController tecEndereco = TextEditingController();
   TextEditingController tecCodigo = TextEditingController();
+  TextEditingController tecNumero = TextEditingController();
   TextEditingController tecInscricaoEstadual = TextEditingController();
 
   @observable
@@ -83,8 +85,9 @@ abstract class _CadastroParceiroController with Store {
       final parceiro = _buildParceiro();
       print(jsonEncode(parceiro.toJson()));
       await _parceiroRepository.create(parceiro.toJson());
-      if(parceiroImage != null)
+      if(parceiroImage != null) {
         await uploadImages(parceiro);
+      }
       CustomSnackBar.success(context, "Parceiro cadastrado com sucesso");
     } catch (e) {
       print(e);
@@ -100,8 +103,9 @@ abstract class _CadastroParceiroController with Store {
       final parceiro = _buildParceiro(id: parceiroOriginal.id);
       print(jsonEncode(parceiro.toJson()));
       await _parceiroRepository.update(parceiroOriginal.id!, parceiro.toJson());
-      if(parceiroImage != null)
+      if(parceiroImage != null) {
         await uploadImages(parceiro);
+      }
       CustomSnackBar.success(context, "Parceiro atualizado com sucesso");
     } catch (e) {
       print(e);
@@ -116,9 +120,9 @@ abstract class _CadastroParceiroController with Store {
       nome: tecDescricao.text,
       pessoaFisica: pessoaFisica,
       cpfCnpj: UtilBrasilFields.removeCaracteres(tecCpfCnpj.text),
-      telefone: UtilBrasilFields.removeCaracteres(tecTelefone.text),
+      celular: UtilBrasilFields.removeCaracteres(tecTelefone.text),
       email: tecEmail.text,
-      cep: tecCep.text,
+      cep: UtilBrasilFields.removeCaracteres(tecCep.text),
       cidade: tecCidade.text,
       estado: tecEstado.text,
       bairro: tecBairro.text,
@@ -129,6 +133,7 @@ abstract class _CadastroParceiroController with Store {
       transportador: transportador,
       agenciaBancaria: agenciaBancaria,
       inscricaoEstadual: tecInscricaoEstadual.text,
+      numero: tecNumero.text,
       urlImage: "https://brinkoo.com.br/images/${Singleton.instance.tenant}/parceiro/${UtilBrasilFields.removeCaracteres(tecCpfCnpj.text)}.png",
     );
   }
@@ -137,16 +142,38 @@ abstract class _CadastroParceiroController with Store {
   void setParceiro({Parceiro? parceiro}) {
     if (parceiro != null) {
       tecDescricao.text = parceiro.nome ?? '';
-      tecCpfCnpj.text = parceiro.cpfCnpj?.toString() ?? '';
+      try{
+        if(parceiro.pessoaFisica == true) {
+          tecCpfCnpj.text = UtilBrasilFields.obterCpf(parceiro.cpfCnpj?.toString() ?? '');
+        } else {
+          tecCpfCnpj.text = UtilBrasilFields.obterCnpj(parceiro.cpfCnpj?.toString() ?? '');
+        }
+      } catch(e){
+        tecCpfCnpj.text = parceiro.cpfCnpj?.toString() ?? '';
+      }
       tecCodigo.text = parceiro.id?.toString() ?? '';
-      tecTelefone.text = parceiro.telefone?.toString() ?? '';
       tecEmail.text = parceiro.email ?? '';
-      tecCep.text = parceiro.cep ?? '';
+
+      try{
+        tecCep.text = UtilBrasilFields.obterCep(parceiro.cep ?? '');
+      } catch(e){
+        tecCep.text = parceiro.cep ?? '';
+      }
+
+      try{
+        tecTelefone.text = UtilBrasilFields.obterTelefone(parceiro.celular?.toString() ?? '');
+      } catch(e){
+        if(parceiro.celular != null) {
+          tecTelefone.text = parceiro.celular?.toString() ?? '';
+        }
+      }
+
       tecCidade.text = parceiro.cidade ?? '';
       tecEstado.text = parceiro.estado ?? '';
       tecBairro.text = parceiro.bairro ?? '';
       tecEndereco.text = parceiro.endereco ?? '';
       tecInscricaoEstadual.text = parceiro.inscricaoEstadual ?? '';
+      tecNumero.text = parceiro.numero ?? '';
       pessoaFisica = parceiro.pessoaFisica ?? true;
       cliente = parceiro.cliente ?? false;
       fornecedor = parceiro.fornecedor ?? false;
@@ -179,6 +206,37 @@ abstract class _CadastroParceiroController with Store {
     tecCidade.text = enderecoViaCep.localidade??'';
     tecEstado.text = enderecoViaCep.uf??'';
     tecEndereco.text = enderecoViaCep.logradouro??'';
+  }
+
+  setDataByCnpj() async{
+    try{
+      final _cnpjRepository = GenericRepository<BuscaCnpj>(
+        endpoint: "opencnpj/${UtilBrasilFields.removeCaracteres(tecCpfCnpj.text)}",
+        fromJson: (p0) => BuscaCnpj.fromJson(p0),
+      );
+      BuscaCnpj buscaCnpj = await _cnpjRepository.get();
+
+      tecBairro.text = buscaCnpj.bairro??'';
+      tecCidade.text = buscaCnpj.municipio??'';
+      tecEstado.text = buscaCnpj.uf??'';
+      tecEndereco.text = buscaCnpj.logradouro??'';
+      tecDescricao.text = buscaCnpj.nome??'';
+      tecEmail.text = buscaCnpj.email??'';
+      try{
+        tecCep.text = buscaCnpj.cep??'';
+      } catch(e){
+        tecCep.text = buscaCnpj.cep??'';
+      }
+
+      try{
+        tecTelefone.text = UtilBrasilFields.obterTelefone("${UtilBrasilFields.removeCaracteres(buscaCnpj.telefone!)}");
+      } catch(e){
+
+      }
+
+    } catch(e){
+      print(e);
+    }
   }
 
 }

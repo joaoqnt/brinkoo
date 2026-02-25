@@ -11,6 +11,7 @@ class Responsavel {
   String? bairro;
   String? estado;
   String? cep;
+  String? numero;
 
   Responsavel({
     this.documento,
@@ -25,6 +26,7 @@ class Responsavel {
     this.bairro,
     this.estado,
     this.cep,
+    this.numero,
   });
 
   Responsavel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class Responsavel {
     bairro = json['bairro'];
     estado = json['estado'];
     cep = json['cep'].toString();
+    numero = json['numero'].toString();
   }
 
   Map<String, dynamic> toJson({bool? hideParentesco}) {
@@ -57,6 +60,7 @@ class Responsavel {
     data['bairro'] = this.bairro;
     data['estado'] = this.estado;
     data['cep'] = this.cep;
+    data['numero'] = this.numero;
     return data;
   }
 }

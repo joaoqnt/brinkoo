@@ -4,6 +4,7 @@ import 'package:brinquedoteca_flutter/component/custom_textformfield.dart';
 import 'package:brinquedoteca_flutter/component/drawer/custom_drawer.dart';
 import 'package:brinquedoteca_flutter/component/row_search_textfield.dart';
 import 'package:brinquedoteca_flutter/controller/crianca/crianca_list_controller.dart';
+import 'package:brinquedoteca_flutter/events/crianca/filter_crianca_dialog.dart';
 import 'package:brinquedoteca_flutter/view/crianca/cadastro_crianca_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -54,6 +55,10 @@ class _CriancaListViewState extends State<CriancaListView> {
             RowSearchTextfield(
               tecController: _controller.tecPesquisa,
               widget: CadastroCriancaView(),
+              filter: true,
+              onFilterPressed: () {
+                FilterCriancaDialog().show(context, _controller);
+              },
               onChanged: (p0) async => await _controller.getCriancas(reset: true),
             ),
             Expanded(
@@ -71,6 +76,7 @@ class _CriancaListViewState extends State<CriancaListView> {
                       if (index < _controller.criancas.length) {
                         return CardCrianca(
                           crianca: _controller.criancas[index],
+                          controller: _controller,
                         );
                       } else {
                         // indicador de carregando na última linha
