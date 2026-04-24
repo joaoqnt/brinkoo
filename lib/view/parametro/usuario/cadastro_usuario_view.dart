@@ -1,5 +1,5 @@
-import 'package:brinquedoteca_flutter/component/custom_appbar.dart';
-import 'package:brinquedoteca_flutter/component/custom_textformfield.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_appbar.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_textformfield.dart';
 import 'package:brinquedoteca_flutter/component/empresa/dropdown_empresa.dart';
 import 'package:brinquedoteca_flutter/component/foto/foto_alter_component.dart';
 import 'package:brinquedoteca_flutter/controller/parametro/usuario/cadastro_usuario_controller.dart';
@@ -31,8 +31,6 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Cadastro de Usuário',
-        pageBackButton: ParametroView(initialIndex: 1,),
-        showBackButton: true,
       ),
       body: Observer(
         builder: (_) {
@@ -57,6 +55,7 @@ class _CadastroUsuarioViewState extends State<CadastroUsuarioView> {
                         width: 100,
                         onAdd: (p0) => _controller.addFoto(p0),
                         imageUrl: (widget.usuario?.urlFoto),
+                        entity: "Foto do usuário",
                       ),
                       _buildInput('Login', _controller.tecLogin),
                       _buildInput('Nome', _controller.tecNome),

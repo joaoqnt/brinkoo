@@ -3,6 +3,7 @@ class FormaPagamento {
   String? descricao;
   int? id;
   int? numeroParcelas;
+  double? valor;
 
   FormaPagamento({this.ativo, this.descricao, this.id, this.numeroParcelas});
 
@@ -11,6 +12,7 @@ class FormaPagamento {
     descricao = json['descricao'];
     id = json['id'];
     numeroParcelas = json['numero_parcelas'];
+    valor = json['valor'];
   }
 
   Map<String, dynamic> toJson() {
@@ -19,6 +21,7 @@ class FormaPagamento {
     data['descricao'] = this.descricao;
     data['id'] = this.id;
     data['numero_parcelas'] = this.numeroParcelas;
+    data['valor'] = this.valor;
     return data;
   }
 }

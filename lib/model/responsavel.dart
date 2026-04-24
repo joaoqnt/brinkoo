@@ -42,7 +42,8 @@ class Responsavel {
     bairro = json['bairro'];
     estado = json['estado'];
     cep = json['cep'].toString();
-    numero = json['numero'].toString();
+    if(json['numero'] != null)
+      numero = json['numero'].toString();
   }
 
   Map<String, dynamic> toJson({bool? hideParentesco}) {

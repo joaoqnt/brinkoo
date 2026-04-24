@@ -1,4 +1,6 @@
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_circle_avatar.dart';
+import 'package:brinquedoteca_flutter/controller/cadastro/cadastro_parceiro_controller.dart';
 import 'package:brinquedoteca_flutter/events/image_preview_dialog.dart';
 import 'package:brinquedoteca_flutter/model/parceiro.dart';
 import 'package:brinquedoteca_flutter/view/cadastros/parceiro/cadastro_parceiro_view.dart';
@@ -6,11 +8,13 @@ import 'package:flutter/material.dart';
 
 class CardParceiro extends StatelessWidget {
   final Parceiro parceiro;
+  final CadastroParceiroController controller;
   final bool enableOnTap;
 
   const CardParceiro({
     super.key,
     required this.parceiro,
+    required this.controller,
     this.enableOnTap = true,
   });
 
@@ -21,19 +25,8 @@ class CardParceiro extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Row(
           children: [
-            InkWell(
-              onTap: parceiro.urlImage != null && parceiro.urlImage!.isNotEmpty
-                  ? () => ImagePreviewDialog.show(context, imageUrl: parceiro.urlImage!)
-                  : null,
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage: parceiro.urlImage != null && parceiro.urlImage!.isNotEmpty
-                    ? NetworkImage(parceiro.urlImage!)
-                    : null,
-                child: parceiro.urlImage == null || parceiro.urlImage!.isEmpty
-                    ? const Icon(Icons.person, size: 30)
-                    : null,
-              ),
+            CustomCircleAvatar(
+              urlImage: parceiro.urlImage,
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -42,10 +35,6 @@ class CardParceiro extends StatelessWidget {
                 children: [
                   Text(
                     parceiro.nome!,
-                    //style: const TextStyle(
-                    //  fontWeight: FontWeight.bold,
-                    //  fontSize: 16,
-                    //),
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -80,12 +69,7 @@ class CardParceiro extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CadastroParceiroView(parceiro: parceiro),
-          ),
-        );
+        controller.setParceiro(parceiro: parceiro);
       },
       child: content,
     );

@@ -1,13 +1,18 @@
+import 'package:brinquedoteca_flutter/component/atividade/alert_atividade.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_selectable_card.dart';
 import 'package:brinquedoteca_flutter/model/atividade.dart';
+import 'package:brinquedoteca_flutter/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-class WrapAtividade extends StatefulWidget {
+import '../../style.dart';
+
+class ListAtividade extends StatefulWidget {
   final List<Atividade> atividades;
   final List<Atividade> atividadesSelected;
   final Function(Atividade atividade, bool selected) onSelected;
 
-  const WrapAtividade({
+  const ListAtividade({
     super.key,
     required this.atividades,
     required this.atividadesSelected,
@@ -15,43 +20,59 @@ class WrapAtividade extends StatefulWidget {
   });
 
   @override
-  State<WrapAtividade> createState() => _WrapAtividadeState();
+  State<ListAtividade> createState() => _ListAtividadeState();
 }
 
-class _WrapAtividadeState extends State<WrapAtividade> {
+class _ListAtividadeState extends State<ListAtividade> {
   @override
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        return InputDecorator(
-          decoration: InputDecoration(
-            labelText: 'Atividades permitidas',
-            isDense: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            // contentPadding: EdgeInsets.all(12),
-          ),
-          child: Wrap(
-            alignment: WrapAlignment.start,
-            runAlignment: WrapAlignment.start,
-            crossAxisAlignment: WrapCrossAlignment.start,
-            spacing: 12,
-            runSpacing: 8,
-            children: widget.atividades.map((atividade) {
-              final isSelected = widget.atividadesSelected
-                  .any((a) => a.id == atividade.id);
 
-              return FilterChip(
-                label: Text(atividade.descricao ?? ''),
-                selected: isSelected,
-                onSelected: (value) {
-                  widget.onSelected(atividade, value);
-                  setState(() {});
-                },
-              );
-            }).toList(),
-          ),
+        return Column(
+          spacing: 10,
+          children: [
+            for(int index = 0; index < widget.atividades.length; index++ )
+              Builder(
+                  builder: (context) {
+                    final atividade = widget.atividades[index];
+                    final isSelected = widget.atividadesSelected.any((a) => a.id == atividade.id);
+                    final iconeData = Utils().getIconeAtividadeByName(atividade.icone ?? "");
+                    return SelectableCard(
+                      selected: isSelected,
+                      title: atividade.nome ?? '',
+                      onTap: () {
+                        widget.onSelected(atividade, !isSelected);
+                        setState(() {});
+                      },
+                      leading: SizedBox(
+                        width: 35,
+                        height: 35,
+                        child: iconeData != null
+                            ? Image.asset("assets/${iconeData.pathImage}")
+                            : const Icon(Icons.toys),
+                      ),
+                      subtitle: Text(
+                        atividade.descricao ?? '',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      trailing: atividade.padrao == false
+                          ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AlertAtividade(),
+                          const SizedBox(width: 6),
+                          Text(isSelected ? "Sim" : "Não"),
+                        ],
+                      )
+                          : null,
+                    );
+                  },
+              )
+          ],
         );
       },
     );

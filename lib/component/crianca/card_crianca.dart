@@ -1,30 +1,36 @@
-import 'package:brinquedoteca_flutter/component/custom_circle_avatar.dart';
-import 'package:brinquedoteca_flutter/controller/crianca/crianca_list_controller.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_circle_avatar.dart';
+import 'package:brinquedoteca_flutter/controller/cadastro/cadastro_crianca_controller.dart';
 import 'package:brinquedoteca_flutter/events/image_preview_dialog.dart';
 import 'package:brinquedoteca_flutter/events/remove_dialog.dart';
 import 'package:brinquedoteca_flutter/model/crianca.dart';
 import 'package:brinquedoteca_flutter/pdf/ficha_cadastral_pdf.dart';
+import 'package:brinquedoteca_flutter/style.dart';
 import 'package:brinquedoteca_flutter/utils/date_helper_util.dart';
 import 'package:brinquedoteca_flutter/utils/utils.dart';
-import 'package:brinquedoteca_flutter/view/crianca/cadastro_crianca_view.dart';
 import 'package:flutter/material.dart';
 
 class CardCrianca extends StatelessWidget {
   final Crianca crianca;
-  final CriancaListController? controller;
+  final CadastroCriancaController? controller;
   final bool enableOnTap;
+  final double elevation;
 
   CardCrianca({
     super.key,
     required this.crianca,
     this.enableOnTap = true,
     this.controller,
+    this.elevation = 2,
   });
 
   @override
   Widget build(BuildContext context) {
     final content = Card(
-      elevation: 2,
+      color: controller?.criancaSelected == crianca ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: elevation == 0 ? BorderSide.none : BorderSide(color: pkLight),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Row(
@@ -127,12 +133,9 @@ class CardCrianca extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CadastroCriancaView(crianca: crianca),
-          ),
-        );
+        controller!.setCrianca(crianca: crianca);
+        controller!.setIndexPage(0);
+        controller!.setIndexPage(0);
       },
       child: content,
     );

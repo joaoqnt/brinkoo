@@ -1,5 +1,5 @@
 import 'package:brinquedoteca_flutter/component/financeiro/card_financeiro.dart';
-import 'package:brinquedoteca_flutter/component/row_search_textfield.dart';
+import 'package:brinquedoteca_flutter/component/util/row_search_textfield.dart';
 import 'package:brinquedoteca_flutter/controller/financeiro/financeiro_list_controller.dart';
 import 'package:flutter/material.dart';
 

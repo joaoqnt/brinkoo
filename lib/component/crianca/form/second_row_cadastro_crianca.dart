@@ -1,8 +1,10 @@
 import 'package:brasil_fields/brasil_fields.dart';
-import 'package:brinquedoteca_flutter/component/custom_textformfield.dart';
-import 'package:brinquedoteca_flutter/component/responsive_field.dart';
-import 'package:brinquedoteca_flutter/controller/crianca/cadastro_crianca_controller.dart';
-import 'package:brinquedoteca_flutter/controller/responsavel/cadastro_responsavel_controller.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_border.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_input_decoration.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_textformfield.dart';
+import 'package:brinquedoteca_flutter/component/util/responsive_field.dart';
+import 'package:brinquedoteca_flutter/controller/cadastro/cadastro_crianca_controller.dart';
+import 'package:brinquedoteca_flutter/controller/cadastro/cadastro_responsavel_controller.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
 import 'package:brinquedoteca_flutter/utils/responsive.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +25,10 @@ class SecondRowCadastroCrianca extends StatelessWidget {
       spacing: 10,
       children: [
         ResponsiveField(
+          width: 170,
           child: CustomTextFormField(
             prefixIcon: const Icon(Icons.calendar_month),
-            labelText: "Data de nasc.",
+            labelText: "Data nasc.",
             controller: controller.tecDataCrianca,
             required: true,
             onChanged: (p0) {
@@ -38,6 +41,7 @@ class SecondRowCadastroCrianca extends StatelessWidget {
           ),
         ),
         ResponsiveField(
+          width: 110,
           child: CustomTextFormField(
             prefixIcon: const Icon(Icons.cake),
             labelText: "Idade",
@@ -46,31 +50,32 @@ class SecondRowCadastroCrianca extends StatelessWidget {
           ),
         ),
         ResponsiveField(
+          width: 180,
           child: DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.person_outline),
-              labelText: "Sexo",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+            // Ativa o preenchimento e define a cor de fundo idêntica ao TextField
+            decoration: CustomInputDecoration.build(
+                context: context,
+              required: true,
+              prefixIcon: Icon(Icons.person),
               isDense: true,
+              labelText: "Sexo"
             ),
+
+            // Ícone do Dropdown mais sutil
+            icon: Icon(Icons.arrow_drop_down, color: Colors.grey.shade600),
+
             validator: (value) {
-              if (value == null) {
-                return "Obrigatório";
-              }
+              if (value == null) return "Campo obrigatório";
               return null;
             },
             value: controller.sexoCrianca.keys.firstOrNull,
             items: controller.sexos.entries.map((entry) {
               return DropdownMenuItem<String>(
                 value: entry.key,
-                child: Text(entry.value),
+                child: Text(entry.value, style: const TextStyle(fontSize: 14)),
               );
             }).toList(),
-            onChanged: (value) {
-              controller.setSexoCrianca(value);
-            },
+            onChanged: (value) => controller.setSexoCrianca(value),
           ),
         ),
         ResponsiveField(

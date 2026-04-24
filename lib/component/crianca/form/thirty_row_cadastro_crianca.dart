@@ -1,8 +1,8 @@
 import 'package:brasil_fields/brasil_fields.dart';
-import 'package:brinquedoteca_flutter/component/custom_textformfield.dart';
-import 'package:brinquedoteca_flutter/component/responsive_field.dart';
-import 'package:brinquedoteca_flutter/controller/crianca/cadastro_crianca_controller.dart';
-import 'package:brinquedoteca_flutter/controller/responsavel/cadastro_responsavel_controller.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_textformfield.dart';
+import 'package:brinquedoteca_flutter/component/util/responsive_field.dart';
+import 'package:brinquedoteca_flutter/controller/cadastro/cadastro_crianca_controller.dart';
+import 'package:brinquedoteca_flutter/controller/cadastro/cadastro_responsavel_controller.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
 import 'package:brinquedoteca_flutter/utils/responsive.dart';
 import 'package:flutter/material.dart';

@@ -370,7 +370,7 @@ class FichaCadastralPdf {
   static String _formatarAtividades(List<Atividade>? atividades) {
     if (atividades == null || atividades.isEmpty) return "Nenhuma atividade cadastrada";
 
-    return atividades.map((a) => a.descricao).join(", ");
+    return atividades.map((a) => a.nome).join(", ");
   }
 
   static Future<void> imprimir(Crianca crianca) async {

@@ -9,6 +9,7 @@ class DropdownFormaPagamento extends StatelessWidget {
   bool required;
   bool enabled;
   FormaPagamento? formaPagamento;
+  String? label;
   void Function(FormaPagamento?)? onChanged;
 
   DropdownFormaPagamento({
@@ -16,6 +17,7 @@ class DropdownFormaPagamento extends StatelessWidget {
     this.required = true,
     this.enabled = true,
     this.formaPagamento,
+    this.label,
     this.onChanged,
   });
 
@@ -49,8 +51,8 @@ class DropdownFormaPagamento extends StatelessWidget {
         decoratorProps: DropDownDecoratorProps(
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.door_sliding),
-            hintText: "Forma Pagamento",
-            labelText: "Forma Pagamento",
+            hintText: label??"Forma Pagamento",
+            labelText: label??"Forma Pagamento",
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(),

@@ -20,7 +20,7 @@ class RemoveDialog<T> {
         return AlertDialog(
           title: Text(title),
           content: Text(
-            "Tem certeza que deseja remover ${itemName(item)}?",
+            "Tem certeza que deseja remover '${itemName(item)}' ?",
           ),
           actions: [
             Observer(

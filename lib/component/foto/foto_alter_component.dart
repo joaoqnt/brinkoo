@@ -1,19 +1,18 @@
 import 'dart:typed_data';
-import 'package:brinquedoteca_flutter/component/custom_action_icon.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_action_icon.dart';
 import 'package:brinquedoteca_flutter/events/image_preview_dialog.dart';
 import 'package:brinquedoteca_flutter/view/camera_preview_view.dart';
 import 'package:flutter/material.dart';
+
 class FotoAlterComponent extends StatelessWidget {
   final Uint8List? capturedImageBytes;
   final String? imageUrl;
   final double width;
   final double height;
-  final Color borderColor;
-  final double borderWidth;
   final void Function()? onRemove;
   final void Function(Uint8List)? onEdit;
   final void Function(Uint8List)? onAdd;
-
+  final String entity;
 
   const FotoAlterComponent({
     super.key,
@@ -21,104 +20,145 @@ class FotoAlterComponent extends StatelessWidget {
     this.imageUrl,
     this.width = 120,
     this.height = 120,
-    this.borderColor = Colors.blue,
-    this.borderWidth = 1.0,
     this.onRemove,
     this.onEdit,
     this.onAdd,
+    required this.entity,
   });
 
   bool get hasImage => capturedImageBytes != null || imageUrl != null;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
+    final colors = Theme.of(context).colorScheme;
+
+    return Column(
+      spacing: 20,
       children: [
-        InkWell(
-          onTap: hasImage
-              ? () {
-            ImagePreviewDialog.show(context,imageBytes: capturedImageBytes,imageUrl: imageUrl);
-          }
-              : null,
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            width: width,
-            height: height,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              // borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: hasImage ? borderColor : Colors.grey,
-                width: borderWidth,
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            InkWell(
+              onTap: hasImage
+                  ? () {
+                ImagePreviewDialog.show(
+                  context,
+                  imageBytes: capturedImageBytes,
+                  imageUrl: imageUrl,
+                );
+              }
+                  : null,
+              borderRadius: BorderRadius.circular(100),
+              child: Container(
+                width: width,
+                height: height,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: hasImage
+                      ? Colors.white
+                      : colors.primary.withOpacity(0.05),
+                  border: Border.all(
+                    color: hasImage
+                        ? colors.primary
+                        : colors.primary.withOpacity(0.2),
+                    width: 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colors.primary.withOpacity(0.08),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
+                ),
+                child: _buildImageContent(colors),
               ),
             ),
-            child: _buildImageContent(),
-          ),
-        ),
 
-        // Botão de adicionar no canto inferior direito
-        Positioned(
-          bottom: -8,
-          right: -8,
-          child: FloatingActionButton(
-            mini: true,
-            backgroundColor: Colors.blue,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (_) => CameraPreviewWeb(
-                  onCapture: (imageBytes) {
-                    if (onAdd != null) onAdd!(imageBytes);
-                  },
+            /// ➕ BOTÃO ADD (mais clean)
+            Positioned(
+              bottom: -6,
+              right: -6,
+              child: InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => CameraPreviewWeb(
+                      onCapture: (imageBytes) {
+                        if (onAdd != null) onAdd!(imageBytes);
+                      },
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(50),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colors.primary,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: colors.primary.withOpacity(0.3),
+                        blurRadius: 8,
+                      )
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.add,
+                    size: 18,
+                    color: Colors.white,
+                  ),
                 ),
-              );
-            },
-            tooltip: 'Adicionar foto',
-            child: const Icon(Icons.add_a_photo, size: 20),
-          ),
-        ),
-
-        // Botões de ação editar/remover no canto superior direito
-        if (hasImage && (onEdit != null || onRemove != null))
-          Positioned(
-            top: 4,
-            right: 4,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                if (onEdit != null)
-                  CustomActionIcon(
-                    icon: Icons.edit,
-                    tooltip: 'Alterar foto',
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => CameraPreviewWeb(
-                          onCapture: (imageBytes) {
-                            if (onEdit != null) onEdit!(imageBytes);
-                          },
-                        ),
-                      );
-                    },
-
-                  ),
-                if (onRemove != null) const SizedBox(height: 8),
-                if (onRemove != null)
-                  CustomActionIcon(
-                    icon: Icons.delete,
-                    tooltip: 'Remover foto',
-                    onPressed: onRemove!,
-                    color: Colors.redAccent,
-                  ),
-              ],
+              ),
             ),
-          ),
+
+            /// ✏️ / 🗑️ AÇÕES
+            if (hasImage && (onEdit != null || onRemove != null))
+              Positioned(
+                top: 4,
+                right: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (onEdit != null)
+                      CustomActionIcon(
+                        icon: Icons.edit,
+                        tooltip: 'Alterar foto',
+                        color: colors.primary,
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => CameraPreviewWeb(
+                              onCapture: (imageBytes) {
+                                if (onEdit != null) onEdit!(imageBytes);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+
+                    if (onRemove != null) const SizedBox(height: 6),
+
+                    if (onRemove != null)
+                      CustomActionIcon(
+                        icon: Icons.delete,
+                        tooltip: 'Remover foto',
+                        color: colors.error,
+                        onPressed: onRemove!,
+                      ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+        Text(entity.toUpperCase(),
+          style: TextStyle(fontSize: 12,color: Colors.grey)
+        )
       ],
     );
   }
 
-  Widget _buildImageContent() {
+  Widget _buildImageContent(ColorScheme colors) {
     if (capturedImageBytes != null) {
       return ClipOval(
         child: Image.memory(
@@ -140,9 +180,9 @@ class FotoAlterComponent extends StatelessWidget {
     } else {
       return Center(
         child: Icon(
-          Icons.image,
-          color: Colors.grey,
-          size: width * 0.25,
+          Icons.image_outlined,
+          color: colors.primary.withOpacity(0.4),
+          size: width * 0.28,
         ),
       );
     }

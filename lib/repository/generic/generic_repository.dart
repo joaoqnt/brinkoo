@@ -35,7 +35,6 @@ class GenericRepository<T> {
   }
 
   Future<T> get() async {
-    print('$baseUrl$endpoint');
     final response = await _dio.get(endpoint);
     return fromJson(response.data);
   }

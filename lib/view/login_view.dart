@@ -1,6 +1,6 @@
 import 'package:brasil_fields/brasil_fields.dart';
-import 'package:brinquedoteca_flutter/component/custom_snackbar.dart';
-import 'package:brinquedoteca_flutter/component/custom_textformfield.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_snackbar.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_textformfield.dart';
 import 'package:brinquedoteca_flutter/controller/login_controller.dart';
 import 'package:brinquedoteca_flutter/model/usuario.dart';
 import 'package:brinquedoteca_flutter/utils/responsive.dart';

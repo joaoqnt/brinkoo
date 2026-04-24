@@ -1,12 +1,10 @@
+import 'package:brinquedoteca_flutter/navegation_page.dart';
 import 'package:brinquedoteca_flutter/style.dart';
-import 'package:brinquedoteca_flutter/view/cadastros/cadastro_view.dart';
 import 'package:brinquedoteca_flutter/view/checkin/checkin_list_view.dart';
-import 'package:brinquedoteca_flutter/view/crianca/crianca_list_view.dart';
 import 'package:brinquedoteca_flutter/view/financeiro/financeiro_view.dart';
 import 'package:brinquedoteca_flutter/view/home_view.dart';
 import 'package:brinquedoteca_flutter/view/login_view.dart';
 import 'package:brinquedoteca_flutter/view/parametro/parametro_view.dart';
-import 'package:brinquedoteca_flutter/view/responsavel/responsavel_list_view.dart';
 import 'package:brinquedoteca_flutter/model/usuario.dart';
 import 'package:brinquedoteca_flutter/utils/shared_preferences_util.dart';
 import 'package:flutter/material.dart';
@@ -34,13 +32,11 @@ class MyApp extends StatelessWidget {
       theme: brinquedotecaTheme,
       initialRoute: initialRoute,
       showSemanticsDebugger: false,
+      debugShowCheckedModeBanner: false,
       routes: {
         '/': (context) => const LoginView(),
-        '/crianca': (context) => CriancaListView(),
         '/checkin': (context) => const CheckinListView(),
-        '/responsavel': (context) => ResponsavelListView(),
-        '/cadastros': (context) => CadastroView(),
-        '/home': (context) => HomeView(),
+        '/home': (context) => NavegationPage(),
         '/parametro_geral': (context) => ParametroView(),
         '/financeiros': (context) => FinanceiroView(),
       },

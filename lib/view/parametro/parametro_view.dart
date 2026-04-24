@@ -3,7 +3,7 @@ import 'package:brinquedoteca_flutter/view/parametro/usuario/cadastro_usuario_vi
 import 'package:brinquedoteca_flutter/view/parametro/usuario/usuario_list_view.dart';
 import 'package:flutter/material.dart';
 
-import '../../component/custom_appbar.dart';
+import '../../component/custom/custom_appbar.dart';
 import '../../component/drawer/custom_drawer.dart';
 
 class ParametroView extends StatefulWidget {
@@ -42,9 +42,7 @@ class _ParametroViewState extends State<ParametroView> with TickerProviderStateM
     return Scaffold(
       appBar: CustomAppBar(
         title: "Cadastros",
-        useDrawer: true,
       ),
-      drawer: CustomDrawer(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

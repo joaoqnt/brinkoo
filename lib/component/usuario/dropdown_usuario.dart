@@ -44,7 +44,7 @@ class DropdownUsuario extends StatelessWidget {
               title: Text("Selecione um atendente"),
             );
           }
-          return CardUsuario(usuario: selectedItem,enableOnTap: false);
+          return CardUsuario(usuario: selectedItem,enableOnTap: false,elevation: 0,);
         },
         items: (String filter, LoadProps? loadProps) async {
           try {

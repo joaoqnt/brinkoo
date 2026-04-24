@@ -1,7 +1,9 @@
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_circle_avatar.dart';
 import 'package:brinquedoteca_flutter/events/image_preview_dialog.dart';
 import 'package:brinquedoteca_flutter/model/parceiro.dart';
 import 'package:brinquedoteca_flutter/model/usuario.dart';
+import 'package:brinquedoteca_flutter/style.dart';
 import 'package:brinquedoteca_flutter/view/cadastros/parceiro/cadastro_parceiro_view.dart';
 import 'package:brinquedoteca_flutter/view/parametro/usuario/cadastro_usuario_view.dart';
 import 'package:flutter/material.dart';
@@ -9,33 +11,30 @@ import 'package:flutter/material.dart';
 class CardUsuario extends StatelessWidget {
   final Usuario usuario;
   final bool enableOnTap;
+  final double elevation;
 
   const CardUsuario({
     super.key,
     required this.usuario,
     this.enableOnTap = true,
+    this.elevation = 2,
   });
 
   @override
   Widget build(BuildContext context) {
     final content = Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: elevation == 0 ? BorderSide.none : BorderSide(color: pkLight),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: elevation == 0 ? EdgeInsets.symmetric(horizontal: 10,vertical: 0) : EdgeInsets.all(10),
         child: Row(
           children: [
-            InkWell(
-              onTap: usuario.urlFoto != null && usuario.urlFoto!.isNotEmpty
-                  ? () => ImagePreviewDialog.show(context, imageUrl: usuario.urlFoto!)
-                  : null,
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage: usuario.urlFoto != null && usuario.urlFoto!.isNotEmpty
-                    ? NetworkImage(usuario.urlFoto!)
-                    : null,
-                child: usuario.urlFoto == null || usuario.urlFoto!.isEmpty
-                    ? const Icon(Icons.person, size: 30)
-                    : null,
-              ),
+            CustomCircleAvatar(
+              urlImage: usuario.urlFoto,
+              icon: Icons.person_pin,
+              radius: elevation == 0 ? 25 : 30,
             ),
             const SizedBox(width: 12),
             Expanded(

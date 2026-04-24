@@ -1,6 +1,8 @@
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:brinquedoteca_flutter/events/image_preview_dialog.dart';
 import 'package:brinquedoteca_flutter/model/checkin.dart';
 import 'package:brinquedoteca_flutter/utils/date_helper_util.dart';
+import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:brinquedoteca_flutter/view/checkin/cadastro_checkin_view.dart';
 import 'package:flutter/material.dart';
 
@@ -15,16 +17,15 @@ class CardCheckin extends StatelessWidget {
         : (checkin.crianca?.urlImage?.isNotEmpty == true ? checkin.crianca!.urlImage! : null);
     return InkWell(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CadastroCheckinView(checkin: checkin,)),
-        );
+        Singleton().navigationController.setIndex(Singleton().navigationController.indexCadastroCheckinView);
+        Singleton().cadastroCheckinController.setCheckin(checkin: checkin);
+        Singleton().cadastroCheckinController.setIsFromCheckinList(true);
+        Singleton().cadastroCheckinController.setIndexPage(0);
       },
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               InkWell(
                 onTap: () => imageUrl == null ? null : ImagePreviewDialog.show(
@@ -74,6 +75,8 @@ class CardCheckin extends StatelessWidget {
                   ],
                 ),
               ),
+              if(checkin.valorTotal != null)
+                Text(UtilBrasilFields.obterReal(checkin.valorTotal!))
             ],
           ),
         ),

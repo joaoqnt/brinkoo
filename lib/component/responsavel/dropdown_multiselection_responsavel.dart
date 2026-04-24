@@ -1,10 +1,12 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:brinquedoteca_flutter/component/crianca/card_crianca.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_selectable_card.dart';
 import 'package:brinquedoteca_flutter/component/responsavel/card_responsavel.dart';
 import 'package:brinquedoteca_flutter/events/image_preview_dialog.dart';
 import 'package:brinquedoteca_flutter/model/crianca.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
+import 'package:brinquedoteca_flutter/style.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
@@ -44,7 +46,7 @@ class _DropdownMultiselectionResponsavelState
     _selected = widget.responsaveisSelected ?? [];
   }
 
-  void _onChipTapped(Responsavel responsavel, bool selected) {
+  void _onTapped(Responsavel responsavel, bool selected) {
     setState(() {
       if (selected) {
         _selected.add(responsavel);
@@ -53,69 +55,36 @@ class _DropdownMultiselectionResponsavelState
       }
     });
 
-    if (widget.onChanged != null) {
-      widget.onChanged!(_selected);
-    }
+    widget.onChanged?.call(_selected);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 4,
+    return Column(
+      spacing: 10,
       children: widget.responsaveis.map((responsavel) {
-        final isSelected = _selected
-            .any((r) => r.id == responsavel.id);
 
-        return FilterChip(
-          label: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(responsavel.nome ?? ''),
-                  Row(
-                    children: [
-                      const Icon(Icons.phone, size: 16, color: Colors.grey),
-                      const SizedBox(width: 4),
-                      Text(
-                        UtilBrasilFields.obterTelefone(responsavel.celular??''),
-                        // responsavel.celular??'',
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              if (isSelected) ...[
-                const SizedBox(width: 6),
-                const Icon(
-                  Icons.check,
-                  size: 18,
-                  color: Colors.green,
-                ),
-              ],
-            ],
-          ),
+        final isSelected = _selected.any((r) => r.id == responsavel.id);
+
+        return SelectableCard(
           selected: isSelected,
-          onSelected: widget.enabled
-              ? (bool selected) =>
-              _onChipTapped(responsavel, selected)
-              : null,
-          avatar: InkWell(
-            onTap: responsavel.urlImage != null && responsavel.urlImage!.isNotEmpty
-                ? () => ImagePreviewDialog.show(context, imageUrl: responsavel.urlImage!)
+          onTap: () => _onTapped(responsavel, !isSelected),
+          title: responsavel.nome ?? '',
+          leading: CircleAvatar(
+            radius: 20,
+            backgroundImage: responsavel.urlImage != null
+                ? NetworkImage(responsavel.urlImage!)
                 : null,
-            child: CircleAvatar(
-              radius: 30,
-              backgroundImage: responsavel.urlImage != null && responsavel.urlImage!.isNotEmpty
-                  ? NetworkImage(responsavel.urlImage!)
-                  : null,
-              child: responsavel.urlImage == null || responsavel.urlImage!.isEmpty
-                  ? const Icon(Icons.person, size: 30)
-                  : null,
-            ),
+          ),
+          subtitle: Row(
+            children: [
+              const Icon(Icons.phone, size: 14, color: Colors.grey),
+              const SizedBox(width: 4),
+              Text(
+                UtilBrasilFields.obterTelefone(responsavel.celular ?? ''),
+                style: const TextStyle(fontSize: 13),
+              ),
+            ],
           ),
         );
       }).toList(),

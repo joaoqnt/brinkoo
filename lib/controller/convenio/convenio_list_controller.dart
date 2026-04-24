@@ -1,4 +1,4 @@
-import 'package:brinquedoteca_flutter/model/convenio.dart';
+import 'package:brinquedoteca_flutter/model/convenio/convenio.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';

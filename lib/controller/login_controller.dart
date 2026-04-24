@@ -66,6 +66,7 @@ abstract class _LoginControllerBase with Store {
 
       return usuario;
     } catch (e) {
+      print(e);
       rethrow;
     } finally {
       isLoading = false;

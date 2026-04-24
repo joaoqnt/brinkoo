@@ -1,7 +1,7 @@
 import 'package:brinquedoteca_flutter/view/financeiro/financeiro_list_view.dart';
 import 'package:flutter/material.dart';
 
-import '../../component/custom_appbar.dart';
+import '../../component/custom/custom_appbar.dart';
 import '../../component/drawer/custom_drawer.dart';
 
 class FinanceiroView extends StatefulWidget {
@@ -40,9 +40,7 @@ class _FinanceiroViewState extends State<FinanceiroView> with TickerProviderStat
     return Scaffold(
       appBar: CustomAppBar(
         title: "Financeiros",
-        useDrawer: true,
       ),
-      drawer: CustomDrawer(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

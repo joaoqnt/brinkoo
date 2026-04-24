@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:brinquedoteca_flutter/component/custom_snackbar.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_snackbar.dart';
 import 'package:brinquedoteca_flutter/model/natureza.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
 import 'package:flutter/material.dart';

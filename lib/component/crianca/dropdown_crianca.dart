@@ -28,10 +28,9 @@ class DropdownCrianca extends StatelessWidget {
     return SizedBox(
       width: double.maxFinite,
       child: DropdownSearch<Crianca>(
-
         popupProps: PopupProps.menu(
           showSearchBox: true,
-          itemBuilder: (context, item, isDisabled, isSelected) => CardCrianca(crianca: item),
+          itemBuilder: (context, item, isDisabled, isSelected) => CardCrianca(crianca: item,elevation: 0,),
           searchFieldProps: TextFieldProps(
             autofocus: true, // já abre com o teclado ativo
           ),
@@ -44,7 +43,7 @@ class DropdownCrianca extends StatelessWidget {
               title: Text("Selecione uma criança"),
             );
           }
-          return CardCrianca(crianca: selectedItem,enableOnTap: false);
+          return CardCrianca(crianca: selectedItem,enableOnTap: false,elevation: 0,);
         },
         items: (String filter, LoadProps? loadProps) async {
           try {

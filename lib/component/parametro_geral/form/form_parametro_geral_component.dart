@@ -1,11 +1,13 @@
 
 import 'package:brinquedoteca_flutter/component/parametro_geral/form/first_row_parametro_geral.dart';
+import 'package:brinquedoteca_flutter/component/parametro_geral/form/second_row_parametro_geral.dart';
+import 'package:brinquedoteca_flutter/component/parametro_geral/form/thirty_row_parametro_geral.dart';
 import 'package:brinquedoteca_flutter/controller/parametro/parametro_geral_controller.dart';
 import 'package:brinquedoteca_flutter/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../custom_textformfield.dart';
+import '../../custom/custom_textformfield.dart';
 
 class FormParametroGeralComponent extends StatelessWidget {
   final ParametroGeralController controller;
@@ -31,9 +33,7 @@ class FormParametroGeralComponent extends StatelessWidget {
                     children: [
                       SizedBox(height: 1),
                       FirstRowParametroGeral(controller: controller),
-                      // SecondRowCadastroCrianca(controller: controller),
-                      // ThirtyRowCadastroCrianca(controller: controller),
-                      // FourtyRowCadastroCrianca(controller: controller),
+                      SecondRowParametroGeral(controller: controller),
                     ],
                   ),
                 if(!isMobile)
@@ -43,8 +43,8 @@ class FormParametroGeralComponent extends StatelessWidget {
                         children: [
                           SizedBox(height: 1),
                           FirstRowParametroGeral(controller: controller),
-                          // SecondRowCadastroCrianca(controller: controller),
-                          // ThirtyRowCadastroCrianca(controller: controller),
+                          SecondRowParametroGeral(controller: controller),
+                          ThirtyRowParametroGeral(controller: controller),
                         ],
                       )
                   ),

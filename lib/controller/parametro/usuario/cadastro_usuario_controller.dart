@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:brinquedoteca_flutter/component/custom_snackbar.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_snackbar.dart';
 import 'package:brinquedoteca_flutter/model/empresa.dart';
 import 'package:brinquedoteca_flutter/model/usuario.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';

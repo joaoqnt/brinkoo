@@ -33,7 +33,7 @@ class DropdownAtividade extends StatelessWidget {
           }
         },
         compareFn: (Atividade a, Atividade b) => a.id == b.id,
-        itemAsString: (Atividade banco) => '${banco.descricao}',
+        itemAsString: (Atividade banco) => '${banco.nome}',
         onChanged: onChanged,
         validator: required
             ? (value) => value == null ? 'Obrigatório' : null

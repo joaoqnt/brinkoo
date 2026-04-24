@@ -15,6 +15,7 @@ class Crianca {
   List<Atividade>? atividades;
   String? sexo;
   String? urlImage;
+  String? cpf;
   bool? ativo;
 
   Crianca({
@@ -32,6 +33,7 @@ class Crianca {
     this.sexo,
     this.urlImage,
     this.ativo,
+    this.cpf,
   });
 
   Crianca.fromJson(Map<String, dynamic> json) {
@@ -59,6 +61,7 @@ class Crianca {
     necessidadesEspeciais = json['necessidades_especiais'];
     nome = json['nome'];
     observacoes = json['observacoes'];
+    cpf = json['cpf'];
     if (json['responsaveis'] != null) {
       responsaveis = <Responsavel>[];
       json['responsaveis'].forEach((v) {
@@ -87,6 +90,7 @@ class Crianca {
     data['necessidades_especiais'] = this.necessidadesEspeciais;
     data['nome'] = this.nome;
     data['observacoes'] = this.observacoes;
+    data['cpf'] = this.cpf;
     if (this.responsaveis != null) {
       data['responsaveis'] = this.responsaveis!.map((v) => v.toJson()).toList();
     }

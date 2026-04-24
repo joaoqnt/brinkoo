@@ -1,5 +1,5 @@
 import 'package:brinquedoteca_flutter/model/atividade.dart';
-import 'package:brinquedoteca_flutter/model/convenio.dart';
+import 'package:brinquedoteca_flutter/model/convenio/convenio.dart';
 import 'package:brinquedoteca_flutter/model/crianca.dart';
 import 'package:brinquedoteca_flutter/model/empresa.dart';
 import 'package:brinquedoteca_flutter/model/forma_pagamento.dart';
@@ -16,10 +16,13 @@ class Checkin {
   Responsavel? responsavelEntrada;
   Responsavel? responsavelSaida;
   GuardaVolume? guardaVolume;
-  FormaPagamento? formaPagamento;
+  List<FormaPagamento>? formaPagamento;
   Empresa? empresa;
   Convenio? convenio;
   double? valorTotal;
+  double? valorBruto;
+  double? desconto;
+  double? descontoConvenio;
   String? urlImageCrianca;
   String? urlImageResponsavelEntrada;
   String? urlImageResponsavelSaida;
@@ -42,6 +45,9 @@ class Checkin {
     this.responsavelSaida,
     this.atividades,
     this.valorTotal,
+    this.valorBruto,
+    this.desconto,
+    this.descontoConvenio,
     this.guardaVolume,
     this.formaPagamento,
     this.urlImageCrianca,
@@ -132,9 +138,31 @@ class Checkin {
     }
 
     try {
-      valorTotal = double.tryParse(json['valor_total'] ?? '');
+      valorTotal = json['valor_total'];
     } catch (e) {
+      print(e);
       valorTotal = null;
+    }
+
+    try {
+      valorBruto = json['valor_bruto'];
+    } catch (e) {
+      print(e);
+      valorBruto = null;
+    }
+
+    try {
+      desconto = json['desconto'];
+    } catch (e) {
+      print(e);
+      desconto = null;
+    }
+
+    try {
+      descontoConvenio = json['desconto_convenio'];
+    } catch (e) {
+      print(e);
+      descontoConvenio = null;
     }
 
     minutosDesejados = json['minutos_desejados'];
@@ -156,9 +184,14 @@ class Checkin {
     }
 
     try {
-      formaPagamento = json['forma_pagamento'] != null
-          ? FormaPagamento.fromJson(json['forma_pagamento'])
-          : null;
+      if (json['formas_pagamento'] != null) {
+        formaPagamento = <FormaPagamento>[];
+        json['formas_pagamento'].forEach((v) {
+          try {
+            formaPagamento!.add(FormaPagamento.fromJson(v));
+          } catch (e) {}
+        });
+      }
     } catch (e) {
       formaPagamento = null;
     }
@@ -168,7 +201,7 @@ class Checkin {
           ? Convenio.fromJson(json['convenio'])
           : null;
     } catch (e) {
-      convenio = null;
+      print(e);
     }
 
     try {
@@ -199,7 +232,7 @@ class Checkin {
       data['guarda_volume'] = this.guardaVolume!.id;
     }
     if (this.formaPagamento != null) {
-      data['forma_pagamento'] = this.formaPagamento!.id;
+      data['formas_pagamento'] = this.formaPagamento!.map((v) => v.toJson()).toList();
     }
     if (this.convenio != null) {
       data['convenio'] = this.convenio!.id;
@@ -230,6 +263,9 @@ class Checkin {
     data['url_image_responsavel_entrada'] = this.urlImageResponsavelEntrada;
     data['url_image_responsavel_saida'] = this.urlImageResponsavelSaida;
     data['minutos_desejados'] = this.minutosDesejados;
+    data['valor_bruto'] = this.valorBruto;
+    data['desconto'] = this.desconto;
+    data['desconto_convenio'] = this.descontoConvenio;
     return data;
   }
 }

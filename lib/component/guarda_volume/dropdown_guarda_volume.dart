@@ -39,7 +39,7 @@ class DropdownGuardaVolume extends StatelessWidget {
                     'descricao': filter,
                   if(Singleton.instance.usuario?.empresa != null)
                     'empresa': Singleton.instance.usuario?.empresa?.id,
-                  'utilizado':false
+                  'ativo':true
                 }
             );
             return guardasVolume;

@@ -1,5 +1,5 @@
 import 'package:brinquedoteca_flutter/component/empresa/card_empresa.dart';
-import 'package:brinquedoteca_flutter/component/row_search_textfield.dart';
+import 'package:brinquedoteca_flutter/component/util/row_search_textfield.dart';
 import 'package:brinquedoteca_flutter/controller/empresa/empresa_list_controller.dart';
 import 'package:brinquedoteca_flutter/view/cadastros/empresa/cadastro_empresa_view.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class _EmpresaListViewState extends State<EmpresaListView> {
             children: [
               RowSearchTextfield(
                   tecController: _controller.tecPesquisa,
-                  widget: CadastroEmpresaView(),
+                  widgetToNavigate: CadastroEmpresaView(),
               ),
               Expanded(
                   child: ListView.builder(

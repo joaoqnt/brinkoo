@@ -101,7 +101,6 @@ class Usuario {
       try {
         return Empresa.fromJson(json['empresa']);
       } catch (e) {
-        print('Erro ao converter empresa: $e');
         return null;
       }
     })()

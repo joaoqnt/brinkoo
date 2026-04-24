@@ -13,8 +13,9 @@ abstract class _InicioController with Store {
   @observable
   List<Checkin> checkins = ObservableList.of([]);
 
+  @action
   Future<List<Checkin>> initAll() async{
-    checkins = await checkinController.getCheckinsAberto();
+    checkins = await checkinController.getCheckinsAberto(refresh: true);
     return checkins;
   }
 }

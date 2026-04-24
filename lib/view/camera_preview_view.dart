@@ -93,7 +93,6 @@ class _CameraPreviewWebState extends State<CameraPreviewWeb> {
       // Tela inteira, appbar opcional
       appBar: AppBar(
         title: const Text('Tirar Foto'),
-        backgroundColor: Colors.blue,
         actions: [
           IconButton(
             icon: const Icon(Icons.camera_alt),

@@ -48,14 +48,14 @@ class DropdownResponsavel extends StatelessWidget {
           ),
         ),
         dropdownBuilder: (context, selectedItem) {
-          if (selectedItem == null || selectedItem.nome == null) {
+          if (selectedItem == null || selectedItem.nome == null || responsavel == null) {
             return ListTile(
               leading: Icon(Icons.person),
               title: Text(title??"Selecione um responsável pelo ${checkin ? "check-in" : "check-out"}"),
               dense: true,
             );
           }
-          return CardResponsavel(responsavel: selectedItem,enableOnTap: false,);
+          return CardResponsavel(responsavel: selectedItem,enableOnTap: false,elevation: 0,);
         },
         items: (String filter, LoadProps? loadProps) async{
           try{

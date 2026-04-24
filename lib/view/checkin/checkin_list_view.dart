@@ -1,9 +1,10 @@
 import 'package:brinquedoteca_flutter/component/checkin/card_checkin.dart';
 import 'package:brinquedoteca_flutter/component/checkin/card_checkin_timer.dart';
-import 'package:brinquedoteca_flutter/component/custom_appbar.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_appbar.dart';
 import 'package:brinquedoteca_flutter/component/drawer/custom_drawer.dart';
-import 'package:brinquedoteca_flutter/component/row_search_textfield.dart';
+import 'package:brinquedoteca_flutter/component/util/row_search_textfield.dart';
 import 'package:brinquedoteca_flutter/controller/checkin/checkin_list_controller.dart';
+import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:brinquedoteca_flutter/view/checkin/cadastro_checkin_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -16,7 +17,7 @@ class CheckinListView extends StatefulWidget {
 }
 
 class _CheckinListViewState extends State<CheckinListView> {
-  final _controller = CheckinListController();
+  final _controller = Singleton().checkinListController;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -44,9 +45,7 @@ class _CheckinListViewState extends State<CheckinListView> {
     return Scaffold(
       appBar: CustomAppBar(
         title: "Check-in",
-        useDrawer: true,
       ),
-      drawer: CustomDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Observer(
@@ -59,7 +58,7 @@ class _CheckinListViewState extends State<CheckinListView> {
                   onChanged: (p0) async {
                     await _controller.getCheckins(refresh: true); // pesquisa reseta
                   },
-                  widget: CadastroCheckinView(listController: _controller),
+                  // widgetToNavigate: CadastroCheckinView(listController: _controller),
                 ),
                 Expanded(
                   child: _controller.checkins.isEmpty && _controller.isLoading

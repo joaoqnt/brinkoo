@@ -59,7 +59,7 @@ abstract class _CheckinListController with Store {
     }
   }
 
-  /// Busca apenas checkins em aberto (sem saída)
+  @action
   Future<List<Checkin>> getCheckinsAberto({bool refresh = false}) async {
     try {
       if (refresh) {

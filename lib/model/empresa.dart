@@ -1,3 +1,5 @@
+import 'package:brinquedoteca_flutter/model/parametro.dart';
+
 class Empresa {
   String? bairro;
   String? celular;
@@ -14,6 +16,7 @@ class Empresa {
   String? numero;
   String? telefone;
   String? uf;
+  Parametro? parametro;
 
   Empresa({
     this.bairro,
@@ -31,6 +34,7 @@ class Empresa {
     this.numero,
     this.telefone,
     this.uf,
+    this.parametro,
   });
 
   Empresa.fromJson(Map<String, dynamic> json) {
@@ -49,6 +53,11 @@ class Empresa {
     numero = json['numero'];
     telefone = json['telefone'];
     uf = json['uf'];
+    try{
+      parametro = Parametro.fromJson(json['parametro']);
+    } catch(e){
+      // print(e);
+    }
   }
 
   Map<String, dynamic> toJson() {

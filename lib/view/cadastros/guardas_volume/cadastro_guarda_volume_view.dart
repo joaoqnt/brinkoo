@@ -1,12 +1,18 @@
-import 'package:brinquedoteca_flutter/component/custom_textformfield.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_card_section.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_textformfield.dart';
 import 'package:brinquedoteca_flutter/component/drawer/custom_drawer.dart';
-import 'package:brinquedoteca_flutter/controller/guarda_volume/cadastro_guarda_volume_controller.dart';
+import 'package:brinquedoteca_flutter/component/generic/text_form_field/codigo.dart';
+import 'package:brinquedoteca_flutter/component/guarda_volume/card_guarda_volume.dart';
+import 'package:brinquedoteca_flutter/component/guarda_volume/form/form_guarda_volume.dart';
+import 'package:brinquedoteca_flutter/component/util/row_search_textfield.dart';
+import 'package:brinquedoteca_flutter/component/util/section_title.dart';
+import 'package:brinquedoteca_flutter/controller/cadastro/cadastro_guarda_volume_controller.dart';
 import 'package:brinquedoteca_flutter/model/guarda_volume.dart';
-import 'package:brinquedoteca_flutter/view/cadastros/cadastro_view.dart';
+import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../component/custom_appbar.dart';
+import '../../../component/custom/custom_appbar.dart';
 
 class CadastroGuardasVolumeView extends StatefulWidget {
   final GuardaVolume? guardaVolume;
@@ -20,65 +26,54 @@ class CadastroGuardasVolumeView extends StatefulWidget {
 }
 
 class _CadastroGuardasVolumeViewState extends State<CadastroGuardasVolumeView> {
-  final _controller = CadastroGuardaVolumeController();
+  final _controller = Singleton().cadastroGuardaVolumeController;
 
   @override
   Widget build(BuildContext context) {
-    _controller.setGuardaVolume(guardaVolume: widget.guardaVolume);
     return Scaffold(
       appBar: CustomAppBar(
-        useDrawer: false,
-        showBackButton: true,
         title: "Cadastro de Guardas Volume",
-        pageBackButton: CadastroView(initialIndex: 4,),
       ),
-      drawer: CustomDrawer(),
-      body: Observer(
-        builder: (context) {
-          return Form(
-            key: _controller.formKeyCenCus,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                spacing: 20,
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 200,
-                        child: CustomTextFormField(
-                          labelText: "Código",
-                          controller: _controller.tecCodigo,
-                          readOnly: true,
+      body: FutureBuilder(
+        future: _controller.getGuardasVolumes(),
+        builder: (context,snapshot) {
+          return Observer(
+            builder: (context) {
+              return Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  spacing: 20,
+                  children: [
+                    CustomCardSection(child: FormGuardaVolume(controller: _controller)),
+                    Expanded(
+                      child: CustomCardSection(
+                        child: Column(
+                          spacing: 10,
+                          children: [
+                            SectionTitle(text: "Guardas Volume já cadastrados"),
+                            RowSearchTextfield(
+                              tecController: _controller.tecPesquisa,
+                              onChanged: (p0) async => await _controller.getGuardasVolumes(descricao: _controller.tecPesquisa.text),
+                            ),
+                            Expanded(
+                                child: !snapshot.hasData ? Center(child: CircularProgressIndicator()) : ListView.builder(
+                                  itemCount: _controller.guardasVoulme.length,
+                                  itemBuilder: (context, index) {
+                                    return CardGuardaVolume(
+                                      guardaVolume: _controller.guardasVoulme[index],
+                                      controller: _controller,
+                                    );
+                                  },
+                                )
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(width: 20),
-                      Expanded(
-                        child: CustomTextFormField(
-                          labelText: "Descrição",
-                          controller: _controller.tecNome,
-                          required: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                  FilledButton(
-                    onPressed: () async {
-                      if(_controller.formKeyCenCus.currentState!.validate() && !_controller.isLoading){
-                        if(widget.guardaVolume == null) {
-                          await _controller.createGuardaVolume(context);
-                        } else {
-                          await _controller.updateGuardaVolume(context,widget.guardaVolume!);
-                        }
-                      }
-                    },
-                    child: _controller.isLoading
-                        ? CircularProgressIndicator(color: Colors.white,)
-                        : Text("Salvar alterações"),
-                  )
-                ],
-              ),
-            ),
+                    )
+                  ],
+                ),
+              );
+            }
           );
         }
       ),

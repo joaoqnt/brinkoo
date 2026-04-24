@@ -9,6 +9,7 @@ class DropdownCentroCusto extends StatelessWidget {
   bool required;
   bool enabled;
   CentroCusto? centroCusto;
+  String? label;
   void Function(CentroCusto?)? onChanged;
 
   DropdownCentroCusto({
@@ -17,6 +18,7 @@ class DropdownCentroCusto extends StatelessWidget {
     this.enabled = true,
     this.centroCusto,
     this.onChanged,
+    this.label,
   });
 
   final _repository = GenericRepository(endpoint: "/centros-custo", fromJson: (p0) => CentroCusto.fromJson(p0));
@@ -55,8 +57,8 @@ class DropdownCentroCusto extends StatelessWidget {
         decoratorProps: DropDownDecoratorProps(
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.business_center),
-            hintText: "Centro de Custo",
-            labelText: "Centro de Custo",
+            hintText: label??"Centro de Custo",
+            labelText: label??"Centro de Custo",
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(),

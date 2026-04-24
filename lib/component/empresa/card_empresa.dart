@@ -1,10 +1,12 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:brinquedoteca_flutter/model/empresa.dart';
+import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:brinquedoteca_flutter/view/cadastros/empresa/cadastro_empresa_view.dart';
 import 'package:flutter/material.dart';
 
 class CardEmpresa extends StatelessWidget {
   final Empresa empresa;
+
   final bool enableOnTap;
 
   CardEmpresa({super.key, required this.empresa, this.enableOnTap = true});
@@ -46,12 +48,7 @@ class CardEmpresa extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CadastroEmpresaView(empresa: empresa),
-          ),
-        );
+        Singleton().cadastroEmpresaController.setEmpresa(empresa: empresa);
       },
       child: content,
     );

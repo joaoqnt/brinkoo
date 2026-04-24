@@ -1,10 +1,10 @@
-import 'package:brinquedoteca_flutter/component/custom_textformfield.dart';
-import 'package:brinquedoteca_flutter/controller/crianca/crianca_list_controller.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_textformfield.dart';
+import 'package:brinquedoteca_flutter/controller/cadastro/cadastro_crianca_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class FilterCriancaDialog{
-  void show(BuildContext context,CriancaListController controller) {
+  void show(BuildContext context,CadastroCriancaController controller) {
     showDialog(
       context: context,
       builder: (_) {

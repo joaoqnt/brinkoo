@@ -1,5 +1,6 @@
 import 'package:brasil_fields/brasil_fields.dart';
-import 'package:brinquedoteca_flutter/component/custom_textformfield.dart';
+import 'package:brinquedoteca_flutter/component/custom/custom_textformfield.dart';
+import 'package:brinquedoteca_flutter/component/empresa/dropdown_empresa.dart';
 import 'package:brinquedoteca_flutter/component/parametro_geral/form/form_parametro_geral_component.dart';
 import 'package:brinquedoteca_flutter/controller/parametro/parametro_geral_controller.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,21 @@ class _ParametrosGeraisViewState extends State<ParametrosGeraisView> {
           return Column(
             spacing: 10,
             children: [
-              Expanded(child: FormParametroGeralComponent(controller: _controller)),
+              SizedBox(height: 1),
+              Row(
+                children: [
+                  Expanded(
+                    child: DropdownEmpresa(
+                      required: true,
+                      empresaSelected: _controller.empresaSelected,
+                      onChanged: (p0) => _controller.setEmpresa(p0),
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(
+                  child: FormParametroGeralComponent(controller: _controller)
+              ),
               FilledButton(
                 onPressed: () async {
                   // Valida o form principal

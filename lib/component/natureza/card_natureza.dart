@@ -1,5 +1,5 @@
 import 'package:brinquedoteca_flutter/model/natureza.dart';
-import 'package:brinquedoteca_flutter/view/cadastros/natureza/cadastro_natureza_view.dart';
+import 'package:brinquedoteca_flutter/view/configuracao/natureza/cadastro_natureza_view.dart';
 import 'package:flutter/material.dart';
 
 class CardNatureza extends StatelessWidget {
