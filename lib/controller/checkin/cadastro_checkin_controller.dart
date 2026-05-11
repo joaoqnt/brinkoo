@@ -14,6 +14,10 @@ import 'package:brinquedoteca_flutter/model/parametro.dart';
 import 'package:brinquedoteca_flutter/model/responsavel.dart';
 import 'package:brinquedoteca_flutter/model/usuario.dart';
 import 'package:brinquedoteca_flutter/repository/generic/generic_repository.dart';
+import 'package:brinquedoteca_flutter/services/checkin/cadastro/checkin_persistence_service.dart';
+import 'package:brinquedoteca_flutter/services/checkin/cadastro/checkin_validation_service.dart';
+import 'package:brinquedoteca_flutter/services/checkin/cadastro/checkin_value_service.dart';
+import 'package:brinquedoteca_flutter/services/convenio/convenio_service.dart';
 import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
@@ -24,7 +28,12 @@ class CadastroCheckinController = _CadastroCheckinController with _$CadastroChec
 
 abstract class _CadastroCheckinController with Store {
   final formKey = GlobalKey<FormState>();
+  final formKeyDialog = GlobalKey<FormState>();
   final formKeyFormaPgto = GlobalKey<FormState>();
+  late final CheckinPersistenceService _checkinPersistenceService;
+  final _validationService = CheckinValidationService();
+  final _convenioService = ConvenioService();
+  final _valueService = CheckinValueService();
   final _checkinRepository = GenericRepository(
     endpoint: "checkins",
     fromJson:(p0) => Checkin.fromJson(p0),
@@ -67,6 +76,7 @@ abstract class _CadastroCheckinController with Store {
   @observable
   Convenio? convenioSelected;
   GuardaVolume? guardaVolumeSelected;
+  @observable
   FormaPagamento? formaPagamentoSelected;
   @observable
   ObservableList<Atividade> atividades = ObservableList.of([]);
@@ -87,12 +97,14 @@ abstract class _CadastroCheckinController with Store {
   @observable
   Usuario? usuarioSaida;
   Checkin? checkinSelected;
+  List<Checkin>? checkinsSelected;
   bool isFromHome = false;
   bool isFromCheckinList = false;
   @observable
   int indexPage = 0;
   @observable
   List<FormaPagamento> formas = ObservableList.of([]);
+  Map<Checkin, Map<String, double>> valoresPorCheckin = {};
   late TabController tabController;
 
   final List<Tab> tabs = const [
@@ -121,36 +133,58 @@ abstract class _CadastroCheckinController with Store {
     parametro = await _parametroRepository.get();
   }
 
-  _setValorBruto(){
-    if(checkinSelected == null) return;
-    final agora = DateTime.now();
-    tempoDecorrido = agora.difference(checkinSelected!.dataEntrada!);
+  _setValorBruto({bool isList = false}) {
+    if (!isList) {
+      if (checkinSelected == null) return;
 
-    final minutos = tempoDecorrido.inMinutes;
-    double precoMinuto = (parametro?.valorMinutoVisita ?? 1);
+      tempoDecorrido = DateTime.now().difference(
+        checkinSelected!.dataEntrada!,
+      );
 
-    if (checkinSelected?.valorTotal == null) {
-      valorFinal = minutos * precoMinuto;
+      valorFinal = _valueService.getValorBrutoCheckin(
+        checkin: checkinSelected!,
+        parametro: parametro,
+      );
     } else {
-      valorFinal = checkinSelected!.valorBruto!;
+      if ((checkinsSelected ?? []).isEmpty) return;
+
+      valorFinal = _valueService.getValorBrutoTotalCheckins(
+        checkins: checkinsSelected!,
+        parametro: parametro,
+        valoresPorCheckin: valoresPorCheckin,
+      );
     }
 
-    tecValorBruto.text = UtilBrasilFields.obterReal(valorFinal);
+    tecValorBruto.text = _valueService.formatCurrency(valorFinal);
   }
 
-  _setValorDesconto(){
-    final desconto = getValorDescontoConvenio() ?? 0;
-
-    tecDescontoConvenio.text =
-        UtilBrasilFields.obterReal(desconto);
-  }
-
-  @action
-  setCheckin({Checkin? checkin}){
+  _reset({Checkin? checkin}){
     criancaImage = null;
     responsavelEntradaImage = null;
     formas.clear();
     checkinSelected = checkin;
+    atividadesSelected.clear();
+    _clearFormaTec();
+    valoresPorCheckin.clear();
+  }
+
+  setCheckins({List<Checkin>? checkins,List<Responsavel>? responsaveis}){
+    _reset(checkin: null);
+    checkinsSelected = checkins;
+    try{
+      setResponsaveisPossiveisCheckout(responsaveis!);
+      _setValorBruto(isList: true);
+      // _setValorDesconto(isList: true);
+      setValorLiquido();
+      _recalcularValorRestante();
+    } catch(e){
+
+    }
+  }
+
+  @action
+  setCheckin({Checkin? checkin}){
+    _reset(checkin: checkin);
     if(checkin != null){
       criancaSelected = checkin.crianca;
       responsavelEntradaSelected = checkin.responsavelEntrada;
@@ -207,6 +241,7 @@ abstract class _CadastroCheckinController with Store {
       responsavelEntradaSelected = null;
       responsavelSaidaSelected = null;
       setConvenio(convenio: null);
+      setIndexPage(0);
       atividades.clear();
       responsaveisPossiveisCheckout.clear();
       checkinSelected = null;
@@ -218,9 +253,10 @@ abstract class _CadastroCheckinController with Store {
 
     if(checkin?.dataEntrada != null) {
       _setValorBruto();
-      _setValorDesconto();
+      // _setValorDesconto();
       setValorLiquido();
-      recalcularValorRestante();
+      _recalcularValorRestante();
+      setIndexPage(1);
     }
   }
 
@@ -261,7 +297,8 @@ abstract class _CadastroCheckinController with Store {
     guardaVolumeSelected = guardaVolume;
   }
 
-  setFormaPagamento(FormaPagamento formaPagamento){
+  @action
+  setFormaPagamento(FormaPagamento? formaPagamento){
     formaPagamentoSelected = formaPagamento;
     try{
       tecValorForma.text = UtilBrasilFields.obterReal(getValorDefaultFormaPgto()!);
@@ -276,10 +313,26 @@ abstract class _CadastroCheckinController with Store {
     try{
       formaPagamentoSelected?.valor = UtilBrasilFields.converterMoedaParaDouble(tecValorForma.text);
       formas.add(formaPagamentoSelected!);
-      recalcularValorRestante();
+      _recalcularValorRestante();
+      _clearFormaTec();
     } catch(e){
 
     }
+  }
+
+  @action
+  removeFormaPagamento(FormaPagamento formapagamento){
+    try{
+      formas.remove(formapagamento);
+      _recalcularValorRestante();
+    } catch(e){
+
+    }
+  }
+
+  _clearFormaTec(){
+    setFormaPagamento(null);
+    tecValorForma.clear();
   }
 
   @action
@@ -317,7 +370,9 @@ abstract class _CadastroCheckinController with Store {
       responsavelSaida: responsavelSaidaSelected,
       guardaVolume: guardaVolumeSelected,
       formaPagamento: formas,
-      valorTotal: checkinSelected == null ? null : checkinSelected?.dataSaida == null
+      valorTotal: checkinSelected == null
+          ? null
+          : checkinSelected?.dataSaida == null
           ? UtilBrasilFields.converterMoedaParaDouble(tecValorLiquido.text)
           : checkinSelected?.valorTotal,
       urlImageResponsavelSaida: (checkin?.urlImageResponsavelSaida) ??
@@ -397,75 +452,23 @@ abstract class _CadastroCheckinController with Store {
     isLoading = false;
   }
 
-  bool validate(BuildContext context,{Checkin? checkin}){
-    if(!formKey.currentState!.validate()) {
-      return false;
-    }
-    if(criancaSelected == null){
-      CustomSnackBar.warning(context, "Selecione uma criança");
-      return false;
-    }
-    if(responsavelEntradaSelected == null){
-      CustomSnackBar.warning(context, "Selecione um responsável pelo check-in");
-      return false;
-    }
-    if(checkin == null){
-      if(responsaveisPossiveisCheckout.isEmpty) {
-        CustomSnackBar.warning(context, "Adicione ao menos um responsável pelo check-out");
-        return false;
-      }
-      if(criancaImage == null && criancaSelected?.urlImage == null){
-       CustomSnackBar.warning(context, "Adicione uma foto da criança");
-       return false;
-      }
-      if(responsavelEntradaImage == null && responsavelEntradaSelected?.urlImage == null){
-        CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-in");
-        return false;
-      }
-    } else {
-      if(checkin.dataSaida == null){
-        if(responsavelSaidaSelected == null) {
-          CustomSnackBar.warning(context, "Selecione um responsável pelo check-out");
-          return false;
-        }
-        if(responsavelSaidaImage == null && responsavelSaidaSelected?.urlImage == null) {
-         CustomSnackBar.warning(context, "Adicione uma foto do responsável pelo check-out");
-         return false;
-        }
-        double valorLiquido = 0;
-        try {
-          valorLiquido = UtilBrasilFields.converterMoedaParaDouble(tecValorLiquido.text);
-        } catch (e) {
-          valorLiquido = 0;
-        }
-
-        double totalFormas = 0;
-
-        for (var forma in formas) {
-          try {
-            totalFormas += forma.valor ?? 0;
-          } catch (e) {}
-        }
-
-// 🔥 Validação
-        if (totalFormas < valorLiquido) {
-          CustomSnackBar.warning(
-              context,
-              "O total das formas de pagamento é menor que o valor líquido"
-          );
-          return false;
-        }
-
-        if (totalFormas > valorLiquido) {
-          CustomSnackBar.warning(
-              context,
-              "O total das formas de pagamento é maior que o valor líquido"
-          );
-          return false;
-        }
-      }
-    }
-    return true;
+  bool validate(BuildContext context,{Checkin? checkin, bool useFormKeyDialog = false}){
+    return _validationService.validate(
+        context: context,
+        formKey: formKey,
+        formKeyDialog: formKeyDialog,
+        useFormKeyDialog: useFormKeyDialog,
+        checkin: checkin,
+        criancaSelected: criancaSelected,
+        responsavelEntradaSelected: responsavelEntradaSelected,
+        responsavelSaidaSelected: responsavelSaidaSelected,
+        responsaveisPossiveisCheckout: responsaveisPossiveisCheckout,
+        formas: formas,
+        valorLiquidoText: tecValorLiquido.text,
+        hasCriancaImage: checkin == null && criancaImage == null && criancaSelected?.urlImage == null,
+        hasResponsavelEntradaImage: checkin == null && responsavelEntradaImage == null && responsavelEntradaSelected?.urlImage == null,
+        hasResponsavelSaidaImage: checkin == null && responsavelSaidaImage == null && responsavelSaidaSelected?.urlImage == null,
+    );
   }
 
   @action
@@ -486,10 +489,34 @@ abstract class _CadastroCheckinController with Store {
   @action
   setConvenio({Convenio? convenio}) {
     convenioSelected = convenio;
+    _calcularDescontoConvenio();
+
     // _setValorBruto();
-    _setValorDesconto();
-    setValorLiquido();
-    recalcularValorRestante();
+    // _setValorDesconto();
+    // setValorLiquido();
+    // _recalcularValorRestante();
+  }
+
+  double _calcularDescontoConvenio() {
+    if (convenioSelected == null) return 0;
+
+    if ((checkinsSelected ?? []).isNotEmpty) {
+      return _convenioService.calcularDescontoConvenioTotalCheckins(
+        checkins: checkinsSelected!,
+        convenio: convenioSelected!,
+        getValorBase: (_) => _valueService.parseCurrency(tecValorBruto.text),
+        valoresPorCheckin: valoresPorCheckin,
+      );
+    }
+
+    if (checkinSelected == null) return 0;
+
+    return _convenioService.calcularDescontoConvenioCheckin(
+      checkin: checkinSelected!,
+      valorBase: _valueService.parseCurrency(tecValorBruto.text),
+      convenio: convenioSelected!,
+    ) ??
+        0;
   }
 
   setIsFromHome(bool value) => isFromHome = value;
@@ -503,97 +530,33 @@ abstract class _CadastroCheckinController with Store {
     //
   }
 
-  double? getValorDescontoConvenio() {
-    if (convenioSelected == null || checkinSelected == null) return null;
-
-    if(checkinSelected?.dataSaida != null) return checkinSelected?.descontoConvenio;
-
-    final dias = convenioSelected!.convenioDias;
-    if (dias == null || dias.isEmpty) return null;
-
-    final diaSemana = checkinSelected!.dataEntrada!.weekday;
-
-    ConvenioDia diaValido = dias.firstWhere(
-          (e) =>
-      e.dia == diaSemana &&
-          ((e.percConvenio ?? 0) != 0 || (e.percEmpresa ?? 0) != 0),
-      orElse: () => dias.first,
-    );
-
-    final percentual =
-        (diaValido.percConvenio ?? 0) + (diaValido.percEmpresa ?? 0);
-
-    final valorDesconto = valorFinal * (percentual / 100);
-
-    return valorDesconto;
+  double _getValorBrutoCheckin(Checkin checkin) {
+    return _valueService.getValorBrutoCheckin(checkin: checkin, parametro: parametro);
   }
 
-  double getValorComDesconto() {
-    final valorBase =
-    (checkinSelected?.valorTotal ?? valorFinal);
-
-    if (convenioSelected == null || checkinSelected == null) {
-      return valorBase;
-    }
-
-    final dias = convenioSelected!.convenioDias;
-    if (dias == null || dias.isEmpty) {
-      return valorBase;
-    }
-
-    final diaSemana = checkinSelected!.dataEntrada!.weekday;
-
-    ConvenioDia diaValido = dias.firstWhere(
-          (e) =>
-      e.dia == diaSemana &&
-          ((e.percConvenio ?? 0) != 0 || (e.percEmpresa ?? 0) != 0),
-      orElse: () => dias.first,
-    );
-
-    final percentual =
-        (diaValido.percConvenio ?? 0) + (diaValido.percEmpresa ?? 0);
-
-    final valorDesconto = valorBase * (percentual / 100);
-
-    final valorLiquido = valorBase - valorDesconto;
-
-    return valorLiquido;
-  }
 
   void setValorLiquido() {
-    double parseValor(String? value) {
-      if (value == null || value.isEmpty) return 0;
+    double value = _valueService.getLiquidValue(
+        grossValue: _valueService.parseCurrency(tecValorBruto.text),
+        convenioDiscount: _valueService.parseCurrency(tecDescontoConvenio.text),
+        manualDiscount: _valueService.parseCurrency(tecDesconto.text)
+    );
 
-      return UtilBrasilFields.converterMoedaParaDouble(value);
-    }
-
-    final valorBruto = parseValor(tecValorBruto.text);
-    final descontoConvenio = parseValor(tecDescontoConvenio.text);
-    final descontoManual = parseValor(tecDesconto.text);
-
-    final totalDescontos = descontoConvenio + descontoManual;
-
-    final valorLiquido = valorBruto - totalDescontos;
-
-    tecValorLiquido.text =
-        UtilBrasilFields.obterReal(valorLiquido < 0 ? 0 : valorLiquido);
+    tecValorLiquido.text = _valueService.formatCurrency(value);
   }
 
   double? getValorDefaultFormaPgto(){
-    if(formas.isEmpty){
-      return UtilBrasilFields.converterMoedaParaDouble(tecValorLiquido.text);
-    } else {
-      return null;
-    }
+    return _valueService.getDefaultPaymentValue(
+        formas: formas,
+        valorLiquidoText: tecValorLiquido.text,
+        valorRestante: valorRestante
+    );
   }
 
-  void recalcularValorRestante() {
-    double totalPago = formas.fold(0.0, (sum, f) => sum + (f.valor ?? 0));
-    double valorLiquido =
-    UtilBrasilFields.converterMoedaParaDouble(tecValorLiquido.text);
-
-    valorRestante = valorLiquido - totalPago;
-
-    if (valorRestante < 0) valorRestante = 0;
+  void _recalcularValorRestante() {
+    valorRestante = _valueService.getRemainingValue(
+        formas: formas,
+        valorLiquidoText: tecValorLiquido.text,
+    );
   }
 }

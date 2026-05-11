@@ -50,10 +50,11 @@ abstract class _CadastroResponsavelController with Store {
 
   bool validate(BuildContext context,{Responsavel? responsavel}) {
     if(formKeyResponsavel.currentState!.validate()){
-      if(responsavelImage == null && responsavelSelected?.urlImage == null){
-        CustomSnackBar.warning(context, "Obrigatório uma foto no cadastro de responsável");
-        return false;
-      }
+      // if(responsavelImage == null && responsavelSelected?.urlImage == null){
+      //   CustomSnackBar.warning(context, "Obrigatório uma foto no cadastro de responsável");
+      //   return false;
+      // }
+      //07592271605
       return true;
     }
     return false;

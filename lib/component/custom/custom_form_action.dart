@@ -4,12 +4,14 @@ class CustomFormAction extends StatelessWidget {
   final VoidCallback onClear;
   final Future<void> Function() onSave;
   final bool isLoading;
+  final bool useOnClear;
 
   const CustomFormAction({
     super.key,
     required this.onClear,
     required this.onSave,
     required this.isLoading,
+    this.useOnClear = true,
   });
 
   @override
@@ -17,10 +19,11 @@ class CustomFormAction extends StatelessWidget {
     return Row(
       spacing: 10,
       children: [
-        FilledButton.tonal(
-          onPressed: isLoading ? null : onClear,
-          child: const Text("Limpar dados"),
-        ),
+        if(useOnClear)
+          FilledButton.tonal(
+            onPressed: isLoading ? null : onClear,
+            child: const Text("Limpar dados"),
+          ),
         FilledButton(
           onPressed: isLoading ? null : () async => await onSave(),
           child: isLoading

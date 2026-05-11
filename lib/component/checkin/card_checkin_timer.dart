@@ -2,6 +2,7 @@ import 'package:brinquedoteca_flutter/controller/checkin/checkin_list_controller
 import 'package:brinquedoteca_flutter/model/checkin.dart';
 import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class CardCheckinTimer extends StatelessWidget {
   final Checkin checkin;
@@ -82,8 +83,15 @@ class CardCheckinTimer extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Observer(
+                        builder: (context) {
+                          return Checkbox(
+                              value: controller.isSelected[checkin]??false,
+                              onChanged: (value) => controller.setIsSelected(checkin, value!),
+                          );
+                        }
+                      ),
                       Expanded(
                         child: Text(
                           nome,

@@ -1,5 +1,6 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:brinquedoteca_flutter/model/forma_pagamento.dart';
+import 'package:brinquedoteca_flutter/utils/singleton.dart';
 import 'package:brinquedoteca_flutter/view/configuracao/forma_pagamento/cadastro_forma_pagamento_view.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +34,9 @@ class CardFormaPagamento extends StatelessWidget {
               ),
             IconButton(
                 onPressed: () {
-
+                  if(showValue){
+                    Singleton().cadastroCheckinController.removeFormaPagamento(formaPagamento);
+                  }
                 },
                 icon: Icon(Icons.delete,color: Colors.red,)
             )

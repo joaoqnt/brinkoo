@@ -78,7 +78,12 @@ class _NavegationPageState extends State<NavegationPage> {
                             return Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
                               child: ListTile(
-                                onTap: () => controller.setIndex(index),
+                                onTap: () {
+                                  if(index == Singleton().navigationController.indexCadastroCheckinView){
+                                    Singleton().cadastroCheckinController.setCheckin(checkin: null);
+                                  }
+                                  controller.setIndex(index);
+                                },
                                 selected: isSelected,
                                 selectedTileColor: primary.withOpacity(0.15),
                                 leading: Icon(

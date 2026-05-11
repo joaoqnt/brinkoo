@@ -24,7 +24,7 @@ class SaidaCheckin extends StatelessWidget {
         return Column(
           spacing: 10,
           children: [
-            if (controller.checkinSelected != null) ...[
+            if (controller.checkinSelected != null || controller.checkinsSelected != null) ...[
               CustomCardSection(
                 child: Column(
                   spacing: 10,
@@ -80,34 +80,6 @@ class SaidaCheckin extends StatelessWidget {
                         Text("Restante: ${UtilBrasilFields.obterReal(controller.valorRestante)}")
                       ],
                     )
-                    // Row(
-                    //   spacing: 10,
-                    //   children: [
-                    //     Expanded(
-                    //       child: DropdownFormaPagamento(
-                    //         formaPagamento: controller.formaPagamentoSelected,
-                    //         onChanged: (p0) => controller.setFormaPagamento(p0!),
-                    //         enabled: controller.checkinSelected?.dataSaida == null,
-                    //         required: true,
-                    //       ),
-                    //     ),
-                    //     Expanded(
-                    //       child: DropdownConvenio(
-                    //         enabled: controller.checkinSelected?.dataSaida == null,
-                    //         required: false,
-                    //         convenio: controller.convenioSelected,
-                    //         onChanged: (p0) => controller.setConvenio(convenio: p0),
-                    //       ),
-                    //     ),
-                    //     FilledButton.icon(
-                    //       onPressed: () {
-                    //         controller.setConvenio(convenio: null);
-                    //       },
-                    //       label: const Text("Limpar"),
-                    //       icon: const Icon(Icons.clear),
-                    //     )
-                    //   ],
-                    // ),
                   ],
                 ),
               )

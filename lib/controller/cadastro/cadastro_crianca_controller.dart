@@ -303,7 +303,8 @@ abstract class _CadastroCriancaController with Store {
       CustomSnackBar.success(context, "Atualizado com sucesso");
     } catch(e){
       print(e);
-      CustomSnackBar.error(context, "Erro ao atualizar");
+      CustomSnackBar.error(context, "Erro ao atualizar:\n"
+          "Favor verificar se a criança já tem um responsável com o mesmo documento.");
     }
     isAltering = false;
 
@@ -349,6 +350,7 @@ abstract class _CadastroCriancaController with Store {
       ativo: radioAtivo == 0,
       cpf: tecCpfCrianca.text.isNotEmpty ? UtilBrasilFields.removeCaracteres(tecCpfCrianca.text) : ""
     );
+    print(jsonEncode(criancaTmp.toJson()));
     return criancaTmp;
   }
 
